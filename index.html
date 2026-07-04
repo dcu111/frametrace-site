@@ -785,45 +785,33 @@
         if (!val) ok = false;
       });
       if (!ok) return;
-      const subject = "Kontakt ze strony FrameTrace" + (firm ? " — " + firm : "");
-      const mailtoFallback = () => {
-        const body = "Imię i nazwisko: " + name + "\nFirma: " + (firm || "—") + "\nE-mail: " + mail + "\n\n" + msg;
-        const gmail = "https://mail.google.com/mail/?view=cm&fs=1&to=frametraceai@gmail.com&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-        const w = window.open(gmail, "_blank", "noopener");
-        if (!w){
-          window.location.href = "mailto:frametraceai@gmail.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-        }
-      };
-      // strona otwarta z pliku na dysku — usługi formularzy tego nie obsługują; dajemy pewny link do Gmaila
+      // kopia otwarta z pliku na dysku nie może wysyłać — kierujemy na stronę online (nic nie otwieramy)
       if (location.protocol === "file:"){
-        const gbody = "Imię i nazwisko: " + name + "\nFirma: " + (firm || "—") + "\nE-mail: " + mail + "\n\n" + msg;
-        const gmail = "https://mail.google.com/mail/?view=cm&fs=1&to=frametraceai@gmail.com&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(gbody);
-        noteEl.innerHTML = 'Ta wersja jest otwarta z pliku — dokończ jednym kliknięciem: <a href="' + gmail + '" target="_blank" rel="noopener" style="font-weight:600;text-decoration:underline;">otwórz gotową wiadomość w Gmailu →</a>, a potem „Wyślij". Automatyczna wysyłka działa, gdy strona jest pod linkiem (online).';
-        window.open(gmail, "_blank", "noopener");
+        noteEl.innerHTML = 'Ta kopia strony jest otwarta z pliku i nie wysyła wiadomości. Wejdźcie na <a href="https://frametrace-site.vercel.app" target="_blank" rel="noopener" style="text-decoration:underline;">frametrace-site.vercel.app</a> albo napiszcie na <b>frametraceai@gmail.com</b>.';
         return;
       }
+      const subject = "Kontakt ze strony FrameTrace" + (firm ? " — " + firm : "");
       const oldTxt = sendBtn.innerHTML;
       sendBtn.disabled = true; sendBtn.innerHTML = "Wysyłanie…";
       try {
+        const fd = new URLSearchParams();
+        fd.set("name", name); fd.set("firma", firm || "—"); fd.set("email", mail); fd.set("message", msg);
+        fd.set("_subject", subject); fd.set("_template", "table"); fd.set("_captcha", "false");
         const res = await fetch("https://formsubmit.co/ajax/frametraceai@gmail.com", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "Accept": "application/json" },
-          body: JSON.stringify({
-            name: name, firma: firm || "—", email: mail, message: msg,
-            _subject: subject, _template: "table", _captcha: "false"
-          })
+          headers: { "Accept": "application/json" },
+          body: fd
         });
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
         if (!res.ok || String(data.success) !== "true") throw new Error(data.message || ("HTTP " + res.status));
         sendBtn.innerHTML = "Wysłano ✓";
         noteEl.textContent = "Dziękujemy! Wiadomość trafiła do FrameTrace — odpowiemy na podany e-mail.";
         cform.reset();
-        setTimeout(() => { sendBtn.disabled = false; sendBtn.innerHTML = oldTxt; }, 6000);
+        setTimeout(() => { sendBtn.disabled = false; sendBtn.innerHTML = oldTxt; }, 8000);
       } catch (err) {
-        // awaryjnie: otwórz pocztę z gotową wiadomością
+        // bez otwierania okien i bez pobierania — tylko czytelny komunikat
         sendBtn.disabled = false; sendBtn.innerHTML = oldTxt;
-        noteEl.innerHTML = 'Nie udało się wysłać bezpośrednio — otworzyliśmy Gmail z gotową wiadomością (kliknijcie w nim „Wyślij"). Można też napisać wprost: <a href="mailto:frametraceai@gmail.com" style="text-decoration:underline;">frametraceai@gmail.com</a>';
-        mailtoFallback();
+        noteEl.innerHTML = 'Nie udało się wysłać automatycznie. Napiszcie proszę bezpośrednio na <b>frametraceai@gmail.com</b> — odpowiemy równie szybko.';
       }
     });
   }
