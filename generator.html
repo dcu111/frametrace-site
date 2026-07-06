@@ -94,6 +94,16 @@
 
   <div class="grid">
     <div>
+      <fieldset style="border-style:dashed;">
+        <legend>⚡ AI-Parser — wypełnij z dokumentu</legend>
+        <label>Wrzuć certyfikat / DoP / kartę produktu (PDF, JPG, PNG) — AI odczyta dane i wypełni formularz</label>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <input type="file" id="ai-file" accept="application/pdf,image/jpeg,image/png,image/webp" style="padding:8px;" />
+          <button type="button" class="btn sec" id="aiBtn" onclick="aiParse()">Odczytaj dokument (AI)</button>
+        </div>
+        <div id="ai-status" style="font-size:13px; color:var(--muted); margin-top:8px;"></div>
+      </fieldset>
+
       <fieldset>
         <legend>Kategoria i produkt</legend>
         <div class="row">
@@ -257,14 +267,17 @@
       "dpp:durability": v("f-durab") || undefined,
       "hasCertification": certs.length ? certs.map(c => ({ "@type": "Certification", "name": c.name, "identifier": c.number, "url": c.url })) : undefined,
       "dpp:battery": cat === "baterie" ? { "chemistry": v("f-chem") || undefined, "ratedCapacityKWh": v("f-cap") || undefined, "carbonFootprintClass": v("f-co2class") || undefined, "stateOfHealthPct": v("f-soh") || undefined, "dueDiligenceReport": v("f-dd") || undefined } : undefined,
-      "dpp:restrictedLayer": v("f-restricted") ? { "note": "Dostęp dla serwisu, recyklerów i organów nadzoru", "url": v("f-restricted") } : undefined,
+      "dpp:restrictedLayer": v("f-restricted") ? { "note": "Dokumentacja techniczna dla serwisu, recyklerów i organów nadzoru — dostęp po podaniu kodu" } : undefined,
       "dpp:dataCarrier": gtin ? "QR / GS1 Digital Link (ISO/IEC 18004)" : "QR (ISO/IEC 18004)",
       "version": 1,
       "dpp:changelog": [ { "version": 1, "date": today, "note": "Utworzenie paszportu" } ],
       "datePublished": today
     };
     Object.keys(doc).forEach(k => doc[k] === undefined && delete doc[k]);
-    current = { id, url, doc };
+    const restricted = v("f-restricted")
+      ? { documents: [ { name: "Dokumentacja o ograniczonym dostępie", url: v("f-restricted") } ] }
+      : null;
+    current = { id, url, doc, restricted };
 
     const qr = qrcode(0, "M"); qr.addData(url); qr.make();
     const qrData = qr.createDataURL(8, 4);
@@ -279,11 +292,12 @@
         '<div class="pc-url">' + url + '</div>' +
       '</div>' +
       '<div class="actions">' +
-        '<button class="btn sec" onclick="dlJSON()">⬇ Pobierz paszport (.json)</button>' +
-        '<button class="btn sec" onclick="dlQR(\'' + qrData + '\')">⬇ Pobierz QR (.png)</button>' +
+        '<button class="btn" id="pubBtn" onclick="publish()">Opublikuj teraz →</button>' +
+        '<button class="btn sec" onclick="dlJSON()">⬇ .json</button>' +
+        '<button class="btn sec" onclick="dlQR(\'' + qrData + '\')">⬇ QR</button>' +
         '<button class="btn sec" onclick="navigator.clipboard.writeText(current.url); this.textContent=\'Skopiowano ✓\'">Kopiuj link</button>' +
       '</div>' +
-      '<div class="hint"><b>Publikacja (żeby QR działał):</b> wrzuć pobrany plik do folderu <code>passports/</code> w repozytorium <code>dcu111/frametrace-site</code> (nazwa pliku: <code>' + id + '.json</code>), zrób Commit + Sync — po ok. 30 s paszport będzie żywy pod powyższym adresem. Historia zmian pliku w GitHubie = ścieżka audytu.</div>';
+      '<div class="hint" id="pubStatus"><b>Opublikuj teraz</b> zapisuje paszport automatycznie — po ok. 30–60 s QR i link są żywe. Ręczna alternatywa: pobierz .json i wrzuć do <code>passports/</code> w repo.</div>';
   }
 
   function dlJSON(){
@@ -295,6 +309,123 @@
   function dlQR(data){
     const a = document.createElement("a");
     a.href = data; a.download = current.id + "-qr.png"; a.click();
+  }
+
+  // ---------- klucz operatora ----------
+  function adminKey(){
+    let k = localStorage.getItem("ft_admin") || "";
+    if (!k){
+      k = (prompt("Podaj klucz operatora FrameTrace (jednorazowo — zostanie zapamiętany):") || "").trim();
+      if (k) localStorage.setItem("ft_admin", k);
+    }
+    return k;
+  }
+
+  // ---------- publikacja jednym klikiem ----------
+  async function publish(){
+    if (!current) return;
+    const key = adminKey();
+    if (!key) return;
+    const btn = document.getElementById("pubBtn");
+    const st = document.getElementById("pubStatus");
+    btn.disabled = true; btn.textContent = "Publikuję…";
+    try {
+      const res = await fetch("/api/save-passport", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": key },
+        body: JSON.stringify({ id: current.id, passport: current.doc, restricted: current.restricted })
+      });
+      const j = await res.json();
+      if (!res.ok){
+        if (res.status === 401) localStorage.removeItem("ft_admin");
+        throw new Error(j.error || ("HTTP " + res.status));
+      }
+      st.innerHTML = "⏳ Zapisano (" + j.action + "). Czekam, aż strona paszportu będzie żywa…";
+      let live = false;
+      for (let i = 0; i < 30; i++){
+        await new Promise(r => setTimeout(r, 5000));
+        try {
+          const c = await fetch("/passports/" + current.id + ".json", { cache: "no-store" });
+          if (c.ok){ live = true; break; }
+        } catch(e){}
+        st.innerHTML = "⏳ Publikacja w toku… (" + ((i+1)*5) + " s)";
+      }
+      st.innerHTML = (live
+        ? '✅ <b>Paszport jest żywy:</b> <a href="' + j.url + '" target="_blank" rel="noopener" style="text-decoration:underline">' + j.url + "</a>"
+        : '🕐 Zapisano — strona będzie dostępna za chwilę: <a href="' + j.url + '" target="_blank" rel="noopener" style="text-decoration:underline">' + j.url + "</a>")
+        + (j.accessCode ? '<br><b>Kod dostępu do warstwy ograniczonej:</b> <code>' + j.accessCode + '</code> — przekaż serwisowi / recyklerowi.' : "");
+      btn.textContent = "Opublikowano ✓";
+    } catch (e){
+      st.innerHTML = "❌ Nie udało się opublikować: " + e.message;
+      btn.disabled = false; btn.textContent = "Opublikuj teraz →";
+    }
+  }
+
+  // ---------- AI-Parser ----------
+  async function aiParse(){
+    const inp = document.getElementById("ai-file");
+    const st = document.getElementById("ai-status");
+    const btn = document.getElementById("aiBtn");
+    const f = inp.files && inp.files[0];
+    if (!f){ st.textContent = "Najpierw wybierz plik."; return; }
+    if (f.size > 4 * 1024 * 1024){ st.textContent = "Plik ma ponad 4 MB — zmniejsz go (limit przesyłu)."; return; }
+    const key = adminKey();
+    if (!key) return;
+    btn.disabled = true; st.textContent = "🤖 AI czyta dokument… (zwykle 10–30 s)";
+    try {
+      const b64 = await new Promise((ok, bad) => {
+        const r = new FileReader();
+        r.onload = () => ok(String(r.result).split(",")[1]);
+        r.onerror = bad; r.readAsDataURL(f);
+      });
+      const res = await fetch("/api/parse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": key },
+        body: JSON.stringify({ media_type: f.type || "application/pdf", data: b64 })
+      });
+      const j = await res.json();
+      if (!res.ok){
+        if (res.status === 401) localStorage.removeItem("ft_admin");
+        throw new Error(j.error || ("HTTP " + res.status));
+      }
+      fillForm(j.fields || {});
+      st.innerHTML = "✅ Odczytano — sprawdź i uzupełnij pola przed publikacją (człowiek zatwierdza).";
+    } catch (e){
+      st.textContent = "❌ " + e.message;
+    }
+    btn.disabled = false;
+  }
+
+  function setIf(id, val){ if (val) document.getElementById(id).value = val; }
+  function fillForm(f){
+    setIf("f-name", f.name); setIf("f-model", f.model); setIf("f-gtin", f.gtin); setIf("f-serial", f.serial);
+    setIf("f-mfr", f.manufacturer); setIf("f-country", f.country); setIf("f-www", f.www);
+    setIf("f-co2", f.co2); setIf("f-method", f.co2Method); setIf("f-rec", f.recycledPct); setIf("f-durab", f.durability);
+    const compBody = document.querySelector("#t-comp tbody");
+    if (Array.isArray(f.components) && f.components.length){
+      compBody.innerHTML = "";
+      f.components.forEach(c => {
+        addComp();
+        const ins = [...compBody.lastElementChild.querySelectorAll("input")];
+        ins[0].value = c.component || ""; ins[1].value = c.material || ""; ins[2].value = c.sharePct || "";
+        ins[3].value = c.origin || ""; ins[4].value = c.recycledPct || "";
+      });
+    }
+    const certBody = document.querySelector("#t-cert tbody");
+    if (Array.isArray(f.certificates) && f.certificates.length){
+      certBody.innerHTML = "";
+      f.certificates.forEach(c => {
+        addCert();
+        const ins = [...certBody.lastElementChild.querySelectorAll("input")];
+        ins[0].value = c.name || ""; ins[1].value = c.number || ""; ins[2].value = c.url || "";
+      });
+    }
+    const b = f.battery || {};
+    if (b.chemistry || b.capacityKWh || b.co2Class || b.sohPct){
+      catSel.value = "baterie"; syncCat();
+      setIf("f-chem", b.chemistry); setIf("f-cap", b.capacityKWh); setIf("f-co2class", b.co2Class);
+      setIf("f-soh", b.sohPct); setIf("f-dd", b.ddUrl);
+    }
   }
 </script>
 </body>

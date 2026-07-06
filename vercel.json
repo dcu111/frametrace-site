@@ -1,5 +1,9 @@
 {
   "cleanUrls": true,
+  "functions": {
+    "api/parse.js": { "maxDuration": 60 },
+    "api/save-passport.js": { "maxDuration": 30 }
+  },
   "rewrites": [
     { "source": "/p/:id", "destination": "/p" },
     { "source": "/01/:gtin/21/:serial", "destination": "/p" }
