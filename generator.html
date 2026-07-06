@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FrameTrace · Generator Cyfrowego Paszportu Produktu</title>
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<style>
+  :root {
+    --bg:#ffffff; --soft:#f6f6f4; --ink:#0a0a0a; --muted:#6b6b68; --faint:#9a9a96;
+    --line:#ececea; --orange:#e2603a; --ok:#2f9e44; --radius:14px;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Inter",-apple-system,sans-serif; color:var(--ink); background:var(--bg); line-height:1.55; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; }
+  .mono { font-family:"JetBrains Mono",monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); font-weight:500; }
+  header { position:sticky; top:0; z-index:50; background:rgba(255,255,255,.92); backdrop-filter:blur(6px); border-bottom:1px solid var(--line); }
+  .nav { max-width:1200px; margin:0 auto; padding:0 24px; height:64px; display:flex; align-items:center; justify-content:space-between; }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:700; font-size:17px; letter-spacing:-.02em; text-decoration:none; }
+  .brand .mark { width:22px; height:22px; border:1.5px solid var(--ink); border-radius:6px; position:relative; }
+  .brand .mark::after { content:""; position:absolute; inset:4px; border:1.5px solid var(--ink); border-radius:3px; }
+  .badge { font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--orange); border:1px solid #f3cdbf; background:#fdf3ef; border-radius:999px; padding:3px 10px; }
+  .wrap { max-width:1200px; margin:0 auto; padding:40px 24px 90px; }
+  h1 { font-size:clamp(26px,3.6vw,38px); font-weight:800; letter-spacing:-.03em; line-height:1.08; margin:10px 0 8px; }
+  .sub { color:var(--muted); max-width:70ch; margin:0 0 34px; }
+
+  .grid { display:grid; grid-template-columns:1.15fr .85fr; gap:34px; align-items:start; }
+  @media (max-width:960px){ .grid{ grid-template-columns:1fr; } }
+
+  fieldset { border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px 22px; margin:0 0 18px; }
+  legend { font-weight:700; font-size:14px; padding:0 8px; letter-spacing:-.01em; }
+  label { display:block; font-size:12.5px; font-weight:600; color:var(--muted); margin:12px 0 5px; }
+  input, select, textarea {
+    width:100%; font-family:inherit; font-size:14.5px; color:var(--ink); background:var(--bg);
+    border:1px solid var(--line); border-radius:10px; padding:10px 12px; outline:none;
+  }
+  input:focus, select:focus, textarea:focus { border-color:var(--ink); }
+  textarea { min-height:74px; resize:vertical; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  @media (max-width:640px){ .row,.row3{ grid-template-columns:1fr; } }
+
+  table.dyn { width:100%; border-collapse:collapse; margin-top:10px; }
+  table.dyn th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--faint); padding:4px 6px; }
+  table.dyn td { padding:4px 6px 4px 0; vertical-align:top; }
+  table.dyn input { padding:8px 10px; font-size:13.5px; }
+  .del { background:none; border:none; color:var(--faint); font-size:16px; cursor:pointer; padding:8px 4px; }
+  .del:hover { color:#c0392b; }
+  .add { background:var(--soft); border:1px dashed var(--line); border-radius:10px; padding:8px 14px; font-family:inherit; font-size:13px; font-weight:600; color:var(--muted); cursor:pointer; margin-top:8px; }
+  .add:hover { border-color:var(--ink); color:var(--ink); }
+
+  .btn { display:inline-flex; align-items:center; gap:8px; background:var(--ink); color:#fff; border:1px solid var(--ink);
+    padding:13px 26px; border-radius:999px; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; }
+  .btn:hover { opacity:.9; }
+  .btn.sec { background:#fff; color:var(--ink); border-color:var(--line); font-size:13.5px; padding:10px 18px; }
+  .btn.sec:hover { border-color:var(--ink); }
+  .btn[disabled] { opacity:.5; pointer-events:none; }
+
+  #batfields { display:none; }
+  body.cat-baterie #batfields { display:block; }
+
+  /* wynik */
+  .result { position:sticky; top:88px; }
+  .pcard { background:#141413; border:1px solid #2a2926; border-radius:18px; padding:22px; color:#fff; }
+  .pc-cat { color:var(--orange); font-size:13px; font-weight:600; }
+  .pc-name { font-size:20px; font-weight:600; letter-spacing:-.015em; margin-top:4px; }
+  .pc-id { font-family:"JetBrains Mono",monospace; font-size:12px; color:#8f8e89; margin-top:4px; word-break:break-all; }
+  .qrbox { background:#fff; border-radius:12px; padding:12px; width:fit-content; margin:16px 0 6px; }
+  .qrbox img { display:block; width:168px; height:168px; image-rendering:pixelated; }
+  .pc-url { font-family:"JetBrains Mono",monospace; font-size:11.5px; color:#b3b2ad; word-break:break-all; }
+  .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
+  .hint { border:1px solid var(--line); border-left:3px solid var(--ink); background:var(--soft); border-radius:12px; padding:16px 18px; margin-top:16px; font-size:13.5px; color:var(--muted); }
+  .hint b { color:var(--ink); }
+  .hint code { font-family:"JetBrains Mono",monospace; font-size:12px; background:#fff; border:1px solid var(--line); border-radius:6px; padding:1px 6px; }
+  .empty { border:1px dashed var(--line); border-radius:18px; padding:40px 24px; text-align:center; color:var(--faint); font-size:14px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <a class="brand" href="/"><span class="mark"></span> FrameTrace</a>
+    <span class="badge">Generator DPP · wersja robocza (MVP)</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <p class="mono">Narzędzie wewnętrzne</p>
+  <h1>Generator Cyfrowego Paszportu Produktu</h1>
+  <p class="sub">Wypełnij dane produktu, a generator utworzy: <b>unikalny identyfikator</b>, <b>trwały publiczny adres URL</b>, <b>kod QR</b> (składnia GS1 Digital Link przy podanym GTIN) i <b>plik paszportu w formacie maszynowo odczytywalnym (JSON-LD)</b>. Obsługuje wszystkie kategorie z planu prac ESPR — nie tylko meble i okna.</p>
+
+  <div class="grid">
+    <div>
+      <fieldset>
+        <legend>Kategoria i produkt</legend>
+        <div class="row">
+          <div>
+            <label>Kategoria produktu (ESPR / regulacje UE)</label>
+            <select id="f-cat">
+              <option value="meble">Meble</option>
+              <option value="okna">Okna i drzwi (CPR)</option>
+              <option value="baterie">Baterie i akumulatory (2023/1542)</option>
+              <option value="tekstylia">Tekstylia i obuwie</option>
+              <option value="opony">Opony</option>
+              <option value="detergenty">Detergenty</option>
+              <option value="farby">Farby i lakiery</option>
+              <option value="smary">Smary</option>
+              <option value="chemikalia">Chemikalia</option>
+              <option value="stal">Żelazo i stal</option>
+              <option value="aluminium">Aluminium</option>
+              <option value="elektronika">Elektronika / ICT</option>
+              <option value="energia">Urządzenia zw. z energią</option>
+              <option value="inna">Inna kategoria</option>
+            </select>
+          </div>
+          <div><label>Nazwa produktu *</label><input id="f-name" placeholder="np. Krzesło dębowe NORD" /></div>
+        </div>
+        <div class="row3">
+          <div><label>Model / wariant</label><input id="f-model" placeholder="np. NORD-01" /></div>
+          <div><label>GTIN / EAN (opcjonalnie)</label><input id="f-gtin" placeholder="np. 5901234123457" inputmode="numeric" /></div>
+          <div><label>Nr seryjny / partii *</label><input id="f-serial" placeholder="np. 2026-07-0001" /></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Producent</legend>
+        <div class="row3">
+          <div><label>Nazwa firmy *</label><input id="f-mfr" placeholder="np. Meble Nowak Sp. z o.o." /></div>
+          <div><label>Kraj</label><input id="f-country" placeholder="np. Polska" value="Polska" /></div>
+          <div><label>Strona www</label><input id="f-www" placeholder="https://…" /></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Skład materiałowy i komponenty</legend>
+        <table class="dyn" id="t-comp">
+          <thead><tr><th>Komponent</th><th>Materiał</th><th>Udział %</th><th>Pochodzenie</th><th>Recykling %</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <button type="button" class="add" onclick="addComp()">+ dodaj komponent</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>Dane środowiskowe</legend>
+        <div class="row3">
+          <div><label>Ślad węglowy (kg CO₂e)</label><input id="f-co2" placeholder="np. 12,4" /></div>
+          <div><label>Metodyka</label><input id="f-method" placeholder="np. ISO 14067 / PEF" /></div>
+          <div><label>Zawartość z recyklingu (%)</label><input id="f-rec" placeholder="np. 8" /></div>
+        </div>
+        <label>Trwałość / naprawialność / demontaż (opis)</label>
+        <textarea id="f-durab" placeholder="np. Konstrukcja skręcana, części zamienne dostępne 10 lat, demontaż bez narzędzi specjalnych."></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>Certyfikaty i deklaracje</legend>
+        <table class="dyn" id="t-cert">
+          <thead><tr><th>Nazwa (np. FSC, DoP, CE)</th><th>Numer</th><th>Link do dokumentu</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <button type="button" class="add" onclick="addCert()">+ dodaj certyfikat</button>
+      </fieldset>
+
+      <fieldset id="batfields">
+        <legend>Baterie — dane dodatkowe (2023/1542)</legend>
+        <div class="row3">
+          <div><label>Chemia ogniw</label><input id="f-chem" placeholder="np. LFP / NMC" /></div>
+          <div><label>Pojemność znamionowa (kWh)</label><input id="f-cap" placeholder="np. 60" /></div>
+          <div><label>Klasa śladu węglowego</label><input id="f-co2class" placeholder="np. B" /></div>
+        </div>
+        <div class="row">
+          <div><label>Stan zdrowia — SoH (%)</label><input id="f-soh" placeholder="np. 100" /></div>
+          <div><label>Raport należytej staranności (URL)</label><input id="f-dd" placeholder="https://…" /></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Warstwa ograniczona (serwis / recykler / organy)</legend>
+        <label>Link do dokumentacji o ograniczonym dostępie (np. schemat demontażu)</label>
+        <input id="f-restricted" placeholder="https://… (widoczne w paszporcie jako sekcja z ograniczonym dostępem)" />
+      </fieldset>
+
+      <button class="btn" id="genBtn" onclick="generate()">Generuj paszport →</button>
+    </div>
+
+    <div class="result">
+      <div id="out" class="empty">Tu pojawi się karta paszportu, kod QR i pliki do publikacji.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const BASE = "https://frametrace-site.vercel.app";
+  const CATLABEL = { meble:"Meble", okna:"Okna i drzwi", baterie:"Baterie i akumulatory", tekstylia:"Tekstylia i obuwie", opony:"Opony", detergenty:"Detergenty", farby:"Farby i lakiery", smary:"Smary", chemikalia:"Chemikalia", stal:"Żelazo i stal", aluminium:"Aluminium", elektronika:"Elektronika / ICT", energia:"Urządzenia zw. z energią", inna:"Inna kategoria" };
+  const CATCODE = { meble:"MEB", okna:"OKN", baterie:"BAT", tekstylia:"TEX", opony:"OPO", detergenty:"DET", farby:"FAR", smary:"SMA", chemikalia:"CHE", stal:"STA", aluminium:"ALU", elektronika:"ELE", energia:"ENE", inna:"INN" };
+
+  const catSel = document.getElementById("f-cat");
+  function syncCat(){ document.body.className = "cat-" + catSel.value; }
+  catSel.addEventListener("change", syncCat); syncCat();
+
+  function rowHTML(cells){ return "<tr>" + cells.map(c => "<td>" + c + "</td>").join("") + '<td><button type="button" class="del" onclick="this.closest(\'tr\').remove()">✕</button></td></tr>'; }
+  function addComp(){ document.querySelector("#t-comp tbody").insertAdjacentHTML("beforeend", rowHTML(['<input placeholder="np. Siedzisko" />','<input placeholder="np. Dąb (FSC)" />','<input placeholder="72" style="width:70px" />','<input placeholder="PL" style="width:70px" />','<input placeholder="0" style="width:70px" />'])); }
+  function addCert(){ document.querySelector("#t-cert tbody").insertAdjacentHTML("beforeend", rowHTML(['<input placeholder="np. FSC" />','<input placeholder="np. C123456" />','<input placeholder="https://…" />'])); }
+  addComp(); addComp(); addCert();
+
+  const v = (id) => (document.getElementById(id).value || "").trim();
+  function tableData(sel, keys){
+    return [...document.querySelectorAll(sel + " tbody tr")].map(tr => {
+      const ins = [...tr.querySelectorAll("input")].map(i => i.value.trim());
+      const o = {}; keys.forEach((k,i) => { if (ins[i]) o[k] = ins[i]; });
+      return o;
+    }).filter(o => Object.keys(o).length);
+  }
+  function sanitize(s){ return s.replace(/[^A-Za-z0-9_-]/g, "-"); }
+
+  let current = null;
+
+  function generate(){
+    const name = v("f-name"), serial = v("f-serial"), mfr = v("f-mfr");
+    for (const [id,val] of [["f-name",name],["f-serial",serial],["f-mfr",mfr]]){
+      document.getElementById(id).style.borderColor = val ? "" : "#c0392b";
+    }
+    if (!name || !serial || !mfr) return;
+
+    const cat = catSel.value, gtin = v("f-gtin").replace(/\D/g,"");
+    const rand = Date.now().toString(36).slice(-4).toUpperCase() + Math.random().toString(36).slice(2,6).toUpperCase();
+    let id, path;
+    if (gtin){
+      id = "01-" + gtin + "-21-" + sanitize(serial);
+      path = "/01/" + gtin + "/21/" + encodeURIComponent(serial);   // GS1 Digital Link URI
+    } else {
+      id = "FT-" + CATCODE[cat] + "-" + rand;
+      path = "/p/" + id;
+    }
+    const url = BASE + path;
+    const today = new Date().toISOString().slice(0,10);
+    const comps = tableData("#t-comp", ["component","material","sharePct","origin","recycledPct"]);
+    const certs = tableData("#t-cert", ["name","number","url"]);
+
+    const doc = {
+      "@context": ["https://schema.org", { "dpp": "https://frametrace-site.vercel.app/ns#" }],
+      "@type": "Product",
+      "@id": url,
+      "identifier": id,
+      "name": name,
+      "model": v("f-model") || undefined,
+      "gtin13": gtin || undefined,
+      "serialNumber": serial,
+      "category": CATLABEL[cat],
+      "dpp:categoryCode": cat,
+      "manufacturer": { "@type": "Organization", "name": mfr, "address": v("f-country") || undefined, "url": v("f-www") || undefined },
+      "dpp:components": comps.length ? comps : undefined,
+      "dpp:carbonFootprint": v("f-co2") ? { "value": v("f-co2"), "unit": "kg CO2e", "methodology": v("f-method") || "deklaracja producenta" } : undefined,
+      "dpp:recycledContentPct": v("f-rec") || undefined,
+      "dpp:durability": v("f-durab") || undefined,
+      "hasCertification": certs.length ? certs.map(c => ({ "@type": "Certification", "name": c.name, "identifier": c.number, "url": c.url })) : undefined,
+      "dpp:battery": cat === "baterie" ? { "chemistry": v("f-chem") || undefined, "ratedCapacityKWh": v("f-cap") || undefined, "carbonFootprintClass": v("f-co2class") || undefined, "stateOfHealthPct": v("f-soh") || undefined, "dueDiligenceReport": v("f-dd") || undefined } : undefined,
+      "dpp:restrictedLayer": v("f-restricted") ? { "note": "Dostęp dla serwisu, recyklerów i organów nadzoru", "url": v("f-restricted") } : undefined,
+      "dpp:dataCarrier": gtin ? "QR / GS1 Digital Link (ISO/IEC 18004)" : "QR (ISO/IEC 18004)",
+      "version": 1,
+      "dpp:changelog": [ { "version": 1, "date": today, "note": "Utworzenie paszportu" } ],
+      "datePublished": today
+    };
+    Object.keys(doc).forEach(k => doc[k] === undefined && delete doc[k]);
+    current = { id, url, doc };
+
+    const qr = qrcode(0, "M"); qr.addData(url); qr.make();
+    const qrData = qr.createDataURL(8, 4);
+
+    document.getElementById("out").className = "";
+    document.getElementById("out").innerHTML =
+      '<div class="pcard">' +
+        '<div class="pc-cat">' + CATLABEL[cat] + '</div>' +
+        '<div class="pc-name">' + name + '</div>' +
+        '<div class="pc-id">' + id + '</div>' +
+        '<div class="qrbox"><img src="' + qrData + '" alt="QR" /></div>' +
+        '<div class="pc-url">' + url + '</div>' +
+      '</div>' +
+      '<div class="actions">' +
+        '<button class="btn sec" onclick="dlJSON()">⬇ Pobierz paszport (.json)</button>' +
+        '<button class="btn sec" onclick="dlQR(\'' + qrData + '\')">⬇ Pobierz QR (.png)</button>' +
+        '<button class="btn sec" onclick="navigator.clipboard.writeText(current.url); this.textContent=\'Skopiowano ✓\'">Kopiuj link</button>' +
+      '</div>' +
+      '<div class="hint"><b>Publikacja (żeby QR działał):</b> wrzuć pobrany plik do folderu <code>passports/</code> w repozytorium <code>dcu111/frametrace-site</code> (nazwa pliku: <code>' + id + '.json</code>), zrób Commit + Sync — po ok. 30 s paszport będzie żywy pod powyższym adresem. Historia zmian pliku w GitHubie = ścieżka audytu.</div>';
+  }
+
+  function dlJSON(){
+    const blob = new Blob([JSON.stringify(current.doc, null, 2)], { type: "application/ld+json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = current.id + ".json"; a.click();
+    URL.revokeObjectURL(a.href);
+  }
+  function dlQR(data){
+    const a = document.createElement("a");
+    a.href = data; a.download = current.id + "-qr.png"; a.click();
+  }
+</script>
+</body>
+</html>

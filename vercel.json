@@ -1,0 +1,16 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/p/:id", "destination": "/p.html" },
+    { "source": "/01/:gtin/21/:serial", "destination": "/p.html" }
+  ],
+  "headers": [
+    {
+      "source": "/passports/(.*)",
+      "headers": [
+        { "key": "Content-Type", "value": "application/ld+json; charset=utf-8" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    }
+  ]
+}

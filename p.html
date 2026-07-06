@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cyfrowy Paszport Produktu · FrameTrace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:#ffffff; --soft:#f6f6f4; --ink:#0a0a0a; --muted:#6b6b68; --faint:#9a9a96;
+    --line:#ececea; --orange:#e2603a; --ok:#2f9e44; --radius:16px;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Inter",-apple-system,sans-serif; color:var(--ink); background:var(--bg); line-height:1.55; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; }
+  .mono { font-family:"JetBrains Mono",monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); font-weight:500; }
+  header { border-bottom:1px solid var(--line); }
+  .nav { max-width:860px; margin:0 auto; padding:0 24px; height:64px; display:flex; align-items:center; justify-content:space-between; }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:700; font-size:17px; letter-spacing:-.02em; text-decoration:none; }
+  .brand .mark { width:22px; height:22px; border:1.5px solid var(--ink); border-radius:6px; position:relative; }
+  .brand .mark::after { content:""; position:absolute; inset:4px; border:1.5px solid var(--ink); border-radius:3px; }
+  .verify { display:inline-flex; align-items:center; gap:7px; font-size:12.5px; color:var(--ok); font-weight:600; }
+  .verify .dot { width:7px; height:7px; border-radius:50%; background:var(--ok); box-shadow:0 0 0 3px rgba(47,158,68,.15); }
+  .wrap { max-width:860px; margin:0 auto; padding:36px 24px 80px; }
+
+  .top { background:#141413; border:1px solid #2a2926; border-radius:20px; padding:28px; color:#fff; }
+  .t-cat { color:var(--orange); font-size:13px; font-weight:600; }
+  .t-name { font-size:clamp(24px,4vw,34px); font-weight:700; letter-spacing:-.025em; line-height:1.1; margin-top:6px; }
+  .t-id { font-family:"JetBrains Mono",monospace; font-size:12px; color:#8f8e89; margin-top:8px; word-break:break-all; }
+  .t-meta { display:flex; gap:22px; flex-wrap:wrap; margin-top:18px; color:#b3b2ad; font-size:13.5px; }
+  .t-meta b { color:#fff; font-weight:600; }
+
+  section { padding:26px 0 4px; }
+  h2 { font-size:15px; font-weight:700; letter-spacing:-.01em; margin:0 0 12px; display:flex; align-items:center; gap:9px; }
+  h2 .n { font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--faint); font-weight:500; }
+  .kv { border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+  .kv .r { display:flex; justify-content:space-between; gap:16px; padding:12px 18px; border-bottom:1px solid var(--line); font-size:14px; }
+  .kv .r:last-child { border-bottom:none; }
+  .kv .k { color:var(--muted); }
+  .kv .val { font-weight:500; text-align:right; }
+  table.comp { width:100%; border:1px solid var(--line); border-radius:var(--radius); border-collapse:separate; border-spacing:0; overflow:hidden; font-size:13.5px; }
+  table.comp th { background:var(--soft); text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--faint); padding:10px 14px; }
+  table.comp td { padding:11px 14px; border-top:1px solid var(--line); }
+  .pill { display:inline-block; font-size:12px; border:1px solid var(--line); background:var(--soft); border-radius:999px; padding:2px 10px; margin:2px 4px 2px 0; }
+  .locked { border:1px dashed var(--line); background:var(--soft); border-radius:var(--radius); padding:18px 20px; color:var(--muted); font-size:13.5px; display:flex; gap:12px; align-items:flex-start; }
+  .locked .ico { font-size:17px; }
+  .log { border-left:2px solid var(--line); margin-left:6px; padding-left:18px; }
+  .log .e { margin-bottom:10px; font-size:13.5px; color:var(--muted); }
+  .log .e b { color:var(--ink); font-weight:600; }
+  .log .e .mono { display:block; letter-spacing:.04em; text-transform:none; margin-bottom:1px; }
+  footer { border-top:1px solid var(--line); margin-top:40px; padding-top:18px; font-size:12.5px; color:var(--faint); display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+  footer a { text-decoration:underline; }
+  .err { text-align:center; padding:80px 20px; color:var(--muted); }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <a class="brand" href="/"><span class="mark"></span> FrameTrace</a>
+    <span class="verify"><span class="dot"></span> Cyfrowy Paszport Produktu</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="err" class="err hidden">
+    <p class="mono">Błąd 404</p>
+    <h1 style="letter-spacing:-.02em">Nie znaleziono paszportu</h1>
+    <p>Sprawdź, czy adres z kodu QR jest kompletny, albo skontaktuj się z producentem.</p>
+  </div>
+
+  <div id="pass" class="hidden">
+    <div class="top">
+      <div class="t-cat" id="o-cat"></div>
+      <div class="t-name" id="o-name"></div>
+      <div class="t-id" id="o-id"></div>
+      <div class="t-meta" id="o-meta"></div>
+    </div>
+
+    <section><h2>Producent <span class="n">01</span></h2><div class="kv" id="o-mfr"></div></section>
+    <section id="s-comp"><h2>Skład materiałowy <span class="n">02</span></h2><div id="o-comp"></div></section>
+    <section id="s-env"><h2>Dane środowiskowe <span class="n">03</span></h2><div class="kv" id="o-env"></div></section>
+    <section id="s-cert"><h2>Certyfikaty i deklaracje <span class="n">04</span></h2><div class="kv" id="o-cert"></div></section>
+    <section id="s-bat" class="hidden"><h2>Dane baterii (2023/1542) <span class="n">05</span></h2><div class="kv" id="o-bat"></div></section>
+
+    <section>
+      <h2>Warstwa o ograniczonym dostępie <span class="n">🔒</span></h2>
+      <div class="locked"><span class="ico">🔒</span><span id="o-restricted">Dokumentacja techniczna (m.in. schematy demontażu, wyniki testów) jest dostępna dla serwisów, recyklerów i organów nadzoru po weryfikacji uprawnień. Kontakt: frametraceai@gmail.com</span></div>
+    </section>
+
+    <section>
+      <h2>Historia zmian (ścieżka audytu) <span class="n">⟳</span></h2>
+      <div class="log" id="o-log"></div>
+    </section>
+
+    <footer>
+      <span>Paszport hostowany i utrzymywany przez <b>FrameTrace</b> · dane w formacie JSON-LD (maszynowo odczytywalne)</span>
+      <span><a id="o-json" href="#">dane surowe (JSON)</a> · <a id="o-audit" href="#" target="_blank" rel="noopener">pełna historia zmian</a></span>
+    </footer>
+  </div>
+</div>
+
+<script>
+  function pid(){
+    const p = location.pathname;
+    let m = p.match(/^\/p\/([^\/]+)\/?$/);
+    if (m) return decodeURIComponent(m[1]);
+    m = p.match(/^\/01\/(\d+)\/21\/([^\/]+)\/?$/);   // GS1 Digital Link
+    if (m) return "01-" + m[1] + "-21-" + decodeURIComponent(m[2]).replace(/[^A-Za-z0-9_-]/g, "-");
+    return new URLSearchParams(location.search).get("id");
+  }
+  const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+  const row = (k, val) => '<div class="r"><span class="k">' + esc(k) + '</span><span class="val">' + val + '</span></div>';
+
+  (async () => {
+    const id = pid();
+    if (!id){ document.getElementById("err").classList.remove("hidden"); return; }
+    let d;
+    try {
+      const res = await fetch("/passports/" + encodeURIComponent(id) + ".json", { cache: "no-cache" });
+      if (!res.ok) throw 0;
+      d = await res.json();
+    } catch(e){ document.getElementById("err").classList.remove("hidden"); return; }
+
+    // JSON-LD dla maszyn
+    const ld = document.createElement("script");
+    ld.type = "application/ld+json"; ld.textContent = JSON.stringify(d);
+    document.head.appendChild(ld);
+    document.title = d.name + " · Cyfrowy Paszport Produktu";
+
+    document.getElementById("o-cat").textContent = d.category || "";
+    document.getElementById("o-name").textContent = d.name || "";
+    document.getElementById("o-id").textContent = "ID: " + (d.identifier || id);
+    const meta = [];
+    if (d.model) meta.push("Model: <b>" + esc(d.model) + "</b>");
+    if (d.gtin13) meta.push("GTIN: <b>" + esc(d.gtin13) + "</b>");
+    if (d.serialNumber) meta.push("Nr seryjny: <b>" + esc(d.serialNumber) + "</b>");
+    if (d.datePublished) meta.push("Wydano: <b>" + esc(d.datePublished) + "</b>");
+    meta.push("Wersja: <b>" + esc(d.version || 1) + "</b>");
+    document.getElementById("o-meta").innerHTML = meta.join(" · ");
+
+    const m = d.manufacturer || {};
+    document.getElementById("o-mfr").innerHTML =
+      row("Producent", "<b>" + esc(m.name || "—") + "</b>") +
+      (m.address ? row("Kraj / adres", esc(m.address)) : "") +
+      (m.url ? row("Strona", '<a href="' + esc(m.url) + '" target="_blank" rel="noopener">' + esc(m.url) + "</a>") : "");
+
+    const comps = d["dpp:components"] || [];
+    if (comps.length){
+      document.getElementById("o-comp").innerHTML =
+        '<table class="comp"><tr><th>Komponent</th><th>Materiał</th><th>Udział</th><th>Pochodzenie</th><th>Recykling</th></tr>' +
+        comps.map(c => "<tr><td>" + esc(c.component || "—") + "</td><td>" + esc(c.material || "—") + "</td><td>" + (c.sharePct ? esc(c.sharePct) + "%" : "—") + "</td><td>" + esc(c.origin || "—") + "</td><td>" + (c.recycledPct ? esc(c.recycledPct) + "%" : "—") + "</td></tr>").join("") +
+        "</table>";
+    } else document.getElementById("s-comp").classList.add("hidden");
+
+    let env = "";
+    const co2 = d["dpp:carbonFootprint"];
+    if (co2) env += row("Ślad węglowy", "<b>" + esc(co2.value) + " " + esc(co2.unit || "kg CO2e") + "</b> <span class='pill'>" + esc(co2.methodology || "") + "</span>");
+    if (d["dpp:recycledContentPct"]) env += row("Zawartość z recyklingu", "<b>" + esc(d["dpp:recycledContentPct"]) + "%</b>");
+    if (d["dpp:durability"]) env += row("Trwałość / naprawialność", esc(d["dpp:durability"]));
+    if (env) document.getElementById("o-env").innerHTML = env; else document.getElementById("s-env").classList.add("hidden");
+
+    const certs = d.hasCertification || [];
+    if (certs.length){
+      document.getElementById("o-cert").innerHTML = certs.map(c =>
+        row(c.name || "Certyfikat", (c.identifier ? "<span class='pill'>" + esc(c.identifier) + "</span> " : "") + (c.url ? '<a href="' + esc(c.url) + '" target="_blank" rel="noopener">dokument →</a>' : ""))
+      ).join("");
+    } else document.getElementById("s-cert").classList.add("hidden");
+
+    const b = d["dpp:battery"];
+    if (b){
+      document.getElementById("s-bat").classList.remove("hidden");
+      let bh = "";
+      if (b.chemistry) bh += row("Chemia ogniw", "<b>" + esc(b.chemistry) + "</b>");
+      if (b.ratedCapacityKWh) bh += row("Pojemność znamionowa", "<b>" + esc(b.ratedCapacityKWh) + " kWh</b>");
+      if (b.carbonFootprintClass) bh += row("Klasa śladu węglowego", "<b>" + esc(b.carbonFootprintClass) + "</b>");
+      if (b.stateOfHealthPct) bh += row("Stan zdrowia (SoH)", "<b>" + esc(b.stateOfHealthPct) + "%</b>");
+      if (b.dueDiligenceReport) bh += row("Należyta staranność", '<a href="' + esc(b.dueDiligenceReport) + '" target="_blank" rel="noopener">raport →</a>');
+      document.getElementById("o-bat").innerHTML = bh;
+    }
+
+    if (d["dpp:restrictedLayer"] && d["dpp:restrictedLayer"].note){
+      document.getElementById("o-restricted").textContent = d["dpp:restrictedLayer"].note + " — dostęp po weryfikacji uprawnień. Kontakt: frametraceai@gmail.com";
+    }
+
+    const log = d["dpp:changelog"] || [];
+    document.getElementById("o-log").innerHTML = log.map(e =>
+      '<div class="e"><span class="mono">' + esc(e.date || "") + " · wersja " + esc(e.version || "") + "</span><b>" + esc(e.note || "") + "</b></div>"
+    ).join("") || '<div class="e">Brak wpisów.</div>';
+
+    const fileId = d.identifier || id;
+    document.getElementById("o-json").href = "/passports/" + encodeURIComponent(fileId) + ".json";
+    document.getElementById("o-audit").href = "https://github.com/dcu111/frametrace-site/commits/main/passports/" + encodeURIComponent(fileId) + ".json";
+
+    document.getElementById("pass").classList.remove("hidden");
+  })();
+</script>
+</body>
+</html>

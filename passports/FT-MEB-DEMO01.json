@@ -1,0 +1,36 @@
+{
+  "@context": ["https://schema.org", { "dpp": "https://frametrace-site.vercel.app/ns#" }],
+  "@type": "Product",
+  "@id": "https://frametrace-site.vercel.app/p/FT-MEB-DEMO01",
+  "identifier": "FT-MEB-DEMO01",
+  "name": "Krzesło dębowe NORD",
+  "model": "NORD-01",
+  "serialNumber": "2026-07-0001",
+  "category": "Meble",
+  "dpp:categoryCode": "meble",
+  "manufacturer": {
+    "@type": "Organization",
+    "name": "Meble Nowak Sp. z o.o. (demo)",
+    "address": "Polska",
+    "url": "https://frametrace-site.vercel.app"
+  },
+  "dpp:components": [
+    { "component": "Siedzisko i oparcie", "material": "Dąb europejski (FSC)", "sharePct": "72", "origin": "PL", "recycledPct": "0" },
+    { "component": "Stelaż", "material": "Sklejka brzozowa", "sharePct": "18", "origin": "FI", "recycledPct": "0" },
+    { "component": "Okucia i łączniki", "material": "Stal", "sharePct": "6", "origin": "DE", "recycledPct": "40" },
+    { "component": "Wykończenie", "material": "Lakier wodny", "sharePct": "4", "origin": "DE", "recycledPct": "0" }
+  ],
+  "dpp:carbonFootprint": { "value": "12,4", "unit": "kg CO2e", "methodology": "ISO 14067 (szacunek)" },
+  "dpp:recycledContentPct": "8",
+  "dpp:durability": "Konstrukcja skręcana, części zamienne dostępne przez 10 lat, demontaż bez narzędzi specjalnych.",
+  "hasCertification": [
+    { "@type": "Certification", "name": "FSC", "identifier": "C123456" }
+  ],
+  "dpp:restrictedLayer": { "note": "Schemat demontażu i specyfikacja okuć — dostęp dla serwisu i recyklerów" },
+  "dpp:dataCarrier": "QR (ISO/IEC 18004)",
+  "version": 1,
+  "dpp:changelog": [
+    { "version": 1, "date": "2026-07-05", "note": "Utworzenie paszportu (demo)" }
+  ],
+  "datePublished": "2026-07-05"
+}
