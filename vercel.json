@@ -1,8 +1,8 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/p/:id", "destination": "/p.html" },
-    { "source": "/01/:gtin/21/:serial", "destination": "/p.html" }
+    { "source": "/p/:id", "destination": "/p" },
+    { "source": "/01/:gtin/21/:serial", "destination": "/p" }
   ],
   "headers": [
     {
