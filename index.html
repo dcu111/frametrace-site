@@ -120,6 +120,18 @@
   .head h2 { font-size: clamp(28px,3.6vw,44px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin: 16px 0 0; }
   .head p { color: var(--muted); font-size: 18px; margin: 18px 0 0; max-width: 60ch; }
 
+  /* ---------- Generator CTA ---------- */
+  .gencta {
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 60px 48px;
+    background: linear-gradient(180deg, #faf7f4, #ffffff); text-align: center;
+  }
+  .gencta h2 { font-size: clamp(26px,3.4vw,40px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin: 14px 0 0; }
+  .gencta p { color: var(--muted); font-size: 18px; max-width: 56ch; margin: 18px auto 0; }
+  .gencta-cta { margin-top: 34px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .gencta-cta .btn { font-size: 15.5px; padding: 14px 28px; }
+  .gencta-note { font-size: 13.5px; color: var(--faint); }
+  @media (max-width: 640px){ .gencta { padding: 44px 24px; } .gencta-cta .btn { width: 100%; } }
+
   /* ---------- Problem ---------- */
   .cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
   @media (max-width: 860px){ .cards{ grid-template-columns:1fr; } }
@@ -441,10 +453,10 @@
       <h1 class="reveal" data-d="1" data-swap="hero_h1">Automatyzacja procesu Cyfrowego Paszportu Produktu <span class="fade">w branży okienniczej.</span></h1>
       <p class="sub reveal" data-d="2" data-swap="hero_sub">Przygotujemy Twoją firmę pod wdrożenie cyfrowych paszportów produktowych. Zbieramy i porządkujemy dane od Waszych dostawców profili, szkła, okuć i uszczelek, a Wy dostajecie gotowy paszport. Bez działu compliance i bez wdrożeń IT po Waszej stronie.</p>
       <div class="hero-cta reveal" data-d="3">
-        <a class="btn" href="#kontakt">Skontaktuj się z nami <span class="arw">→</span></a>
-        <a class="btn ghost" href="#jak">Zobacz, jak działamy</a>
+        <a class="btn" href="/generator">Wygeneruj paszport za darmo <span class="arw">→</span></a>
+        <a class="btn ghost" href="#kontakt">Skontaktuj się z nami</a>
       </div>
-      <p class="hero-note reveal" data-d="3">Zero zobowiązań — odpowiadamy na każdą wiadomość.</p>
+      <p class="hero-note reveal" data-d="3">Bez rejestracji · wypróbuj narzędzie od razu, sam.</p>
     </div>
   </section>
 
@@ -663,6 +675,21 @@
       </div>
       <div class="callout reveal">
         <p data-swap="pass_callout"><strong>Ważne:</strong> dla okien nie zostały jeszcze podane konkretne wytyczne DPP. Póki co paszport opieramy na wytycznych obowiązujących dla innych grup produktów i przygotowujemy Waszą firmę tak, by była sprawnie gotowa na te zmiany. Gdy tylko oficjalne wytyczne dla okien będą dostępne, dostosujemy paszport do wszystkich wymogów.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- GENERATOR CTA -->
+  <section id="wyprobuj" class="divider">
+    <div class="wrap">
+      <div class="gencta reveal">
+        <p class="mono">Wypróbuj teraz</p>
+        <h2>Wygeneruj Cyfrowy Paszport swojego produktu — za darmo.</h2>
+        <p>Wpisz dane albo po prostu wrzuć certyfikat czy kartę produktu, a nasze narzędzie w kilka minut utworzy gotowy paszport: kod QR, trwały link i plik danych zgodny z wymogami UE. Bez rejestracji, bez zobowiązań.</p>
+        <div class="gencta-cta">
+          <a class="btn" href="/generator">Wygeneruj paszport za darmo <span class="arw">→</span></a>
+          <span class="gencta-note">✨ Z AI-Parserem — odczyta dane wprost z Twojego dokumentu.</span>
+        </div>
       </div>
     </div>
   </section>

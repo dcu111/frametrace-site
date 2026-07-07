@@ -208,6 +208,9 @@
               <p class="help">Numer konkretnej sztuki lub partii produkcyjnej.</p>
             </div>
           </div>
+          <label>Kod towarowy (TARIC / CN) <span class="opt">opcjonalne</span></label>
+          <input id="f-taric" placeholder="np. 9401 61 00" />
+          <p class="help">Kod celny/klasyfikacyjny produktu — jeśli go znasz.</p>
         </div>
       </div>
 
@@ -236,6 +239,18 @@
               <input id="f-www" placeholder="https://…" />
             </div>
           </div>
+          <div class="row">
+            <div>
+              <label>NIP / VAT / EORI <span class="opt">opcjonalne</span></label>
+              <input id="f-operatorid" placeholder="np. PL1234567890" />
+              <p class="help">Identyfikator producenta jako podmiotu gospodarczego (wymóg UE).</p>
+            </div>
+            <div>
+              <label>Importer / przedstawiciel w UE <span class="opt">opcjonalne</span></label>
+              <input id="f-importer" placeholder="jeśli producent jest spoza UE" />
+              <p class="help">Podmiot odpowiedzialny w Unii, gdy producent działa spoza UE.</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -255,6 +270,9 @@
           </table>
           <button type="button" class="add" onclick="addComp()">+ dodaj komponent</button>
           <p class="help">Wpisz główne materiały i ich udział. Udziały nie muszą sumować się idealnie. „Pochodzenie" i „Recykling %" — jeśli wiesz.</p>
+          <label style="margin-top:18px;">Substancje wzbudzające obawy (SVHC / SCIP)</label>
+          <textarea id="f-svhc" placeholder="np. Brak substancji z listy SVHC powyżej 0,1%. Albo: nazwa substancji, stężenie i gdzie w produkcie się znajduje."></textarea>
+          <p class="help">Wymóg UE: substancje niebezpieczne z listy kandydackiej REACH (SVHC) i zgłoszenie do bazy SCIP. Jeśli brak — wpisz „brak".</p>
         </div>
       </div>
 
@@ -283,9 +301,12 @@
               <input id="f-rec" placeholder="np. 8" />
             </div>
           </div>
-          <label>Trwałość, naprawialność, demontaż</label>
-          <textarea id="f-durab" placeholder="np. Konstrukcja skręcana, części zamienne dostępne 10 lat, demontaż bez narzędzi specjalnych."></textarea>
-          <p class="help">Krótki opis — jak długo działa, czy da się naprawić i rozłożyć na części.</p>
+          <label>Trwałość i naprawialność</label>
+          <textarea id="f-durab" placeholder="np. Konstrukcja skręcana, części zamienne dostępne 10 lat, gwarancja 5 lat."></textarea>
+          <p class="help">Jak długo produkt działa i czy da się go naprawić.</p>
+          <label>Demontaż i recykling (koniec życia)</label>
+          <textarea id="f-repair" placeholder="np. Jak rozłożyć na części, które elementy nadają się do odzysku, gdzie oddać do recyklingu."></textarea>
+          <p class="help">Instrukcje dla użytkownika i zakładu przetwarzania (wymóg ESPR).</p>
         </div>
       </div>
 
@@ -418,11 +439,15 @@
       "serialNumber": serial,
       "category": CATLABEL[cat],
       "dpp:categoryCode": cat,
-      "manufacturer": { "@type": "Organization", "name": mfr, "address": v("f-country") || undefined, "url": v("f-www") || undefined },
+      "manufacturer": { "@type": "Organization", "name": mfr, "identifier": v("f-operatorid") || undefined, "address": v("f-country") || undefined, "url": v("f-www") || undefined },
+      "dpp:importer": v("f-importer") || undefined,
+      "dpp:commodityCode": v("f-taric") || undefined,
       "dpp:components": comps.length ? comps : undefined,
+      "dpp:substancesOfConcern": v("f-svhc") || undefined,
       "dpp:carbonFootprint": v("f-co2") ? { "value": v("f-co2"), "unit": "kg CO2e", "methodology": v("f-method") || "deklaracja producenta" } : undefined,
       "dpp:recycledContentPct": v("f-rec") || undefined,
       "dpp:durability": v("f-durab") || undefined,
+      "dpp:endOfLife": v("f-repair") || undefined,
       "hasCertification": certs.length ? certs.map(c => ({ "@type": "Certification", "name": c.name, "identifier": c.number, "url": c.url })) : undefined,
       "dpp:battery": cat === "baterie" ? { "chemistry": v("f-chem") || undefined, "ratedCapacityKWh": v("f-cap") || undefined, "carbonFootprintClass": v("f-co2class") || undefined, "stateOfHealthPct": v("f-soh") || undefined, "dueDiligenceReport": v("f-dd") || undefined } : undefined,
       "dpp:restrictedLayer": v("f-restricted") ? { "note": "Dokumentacja techniczna dla serwisu, recyklerów i organów nadzoru — dostęp po podaniu kodu" } : undefined,
@@ -559,8 +584,11 @@
   function setIf(id, val){ if (val) document.getElementById(id).value = val; }
   function fillForm(f){
     setIf("f-name", f.name); setIf("f-model", f.model); setIf("f-gtin", f.gtin); setIf("f-serial", f.serial);
-    setIf("f-mfr", f.manufacturer); setIf("f-country", f.country); setIf("f-www", f.www);
-    setIf("f-co2", f.co2); setIf("f-method", f.co2Method); setIf("f-rec", f.recycledPct); setIf("f-durab", f.durability);
+    setIf("f-taric", f.commodityCode);
+    setIf("f-mfr", f.manufacturer); setIf("f-country", f.country); setIf("f-www", f.www); setIf("f-importer", f.importer);
+    setIf("f-svhc", f.substancesOfConcern);
+    setIf("f-co2", f.co2); setIf("f-method", f.co2Method); setIf("f-rec", f.recycledPct);
+    setIf("f-durab", f.durability); setIf("f-repair", f.endOfLife);
     const compBody = document.querySelector("#t-comp tbody");
     if (Array.isArray(f.components) && f.components.length){
       compBody.innerHTML = "";

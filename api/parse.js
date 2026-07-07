@@ -2,20 +2,22 @@
 const S = (props, required) => ({ type: "OBJECT", properties: props, required });
 const STR = { type: "STRING" };
 const SCHEMA = S({
-  name: STR, model: STR, gtin: STR, serial: STR, manufacturer: STR, country: STR, www: STR,
+  name: STR, model: STR, gtin: STR, serial: STR, commodityCode: STR,
+  manufacturer: STR, country: STR, www: STR, importer: STR,
   components: {
     type: "ARRAY",
     items: S({ component: STR, material: STR, sharePct: STR, origin: STR, recycledPct: STR },
       ["component","material","sharePct","origin","recycledPct"])
   },
-  co2: STR, co2Method: STR, recycledPct: STR, durability: STR,
+  substancesOfConcern: STR,
+  co2: STR, co2Method: STR, recycledPct: STR, durability: STR, endOfLife: STR,
   certificates: {
     type: "ARRAY",
     items: S({ name: STR, number: STR, url: STR }, ["name","number","url"])
   },
   battery: S({ chemistry: STR, capacityKWh: STR, co2Class: STR, sohPct: STR, ddUrl: STR },
     ["chemistry","capacityKWh","co2Class","sohPct","ddUrl"])
-}, ["name","model","gtin","serial","manufacturer","country","www","components","co2","co2Method","recycledPct","durability","certificates","battery"]);
+}, ["name","model","gtin","serial","commodityCode","manufacturer","country","www","importer","components","substancesOfConcern","co2","co2Method","recycledPct","durability","endOfLife","certificates","battery"]);
 
 const PROMPT = `Przeanalizuj załączony dokument (certyfikat, deklarację właściwości użytkowych, kartę produktu, specyfikację lub etykietę) i wyekstrahuj dane do Cyfrowego Paszportu Produktu.
 
@@ -25,6 +27,10 @@ Zasady:
 - Liczby podawaj jako tekst, bez jednostek (np. "12,4").
 - "certificates": nazwa systemu certyfikacji (np. FSC, PEFC, CE, DoP, OEKO-TEX) i numer, jeśli widoczny.
 - "components": komponenty/materiały z udziałem procentowym, jeśli podano.
+- "substancesOfConcern": substancje niebezpieczne / z listy SVHC / zgłoszenia SCIP, jeśli dokument je wymienia.
+- "endOfLife": informacje o demontażu, recyklingu lub utylizacji, jeśli są.
+- "commodityCode": kod towarowy / celny (TARIC / CN / HS), jeśli podano.
+- "importer": importer lub przedstawiciel w UE, jeśli wskazany.
 - "battery" wypełniaj tylko dla dokumentów dotyczących baterii.`;
 
 module.exports = async (req, res) => {

@@ -155,8 +155,11 @@
     const m = d.manufacturer || {};
     document.getElementById("o-mfr").innerHTML =
       row("Producent", "<b>" + esc(m.name || "—") + "</b>") +
+      (m.identifier ? row("Identyfikator operatora", "<span class='pill'>" + esc(m.identifier) + "</span>") : "") +
       (m.address ? row("Kraj / adres", esc(m.address)) : "") +
-      (m.url ? row("Strona", '<a href="' + esc(m.url) + '" target="_blank" rel="noopener">' + esc(m.url) + "</a>") : "");
+      (m.url ? row("Strona", '<a href="' + esc(m.url) + '" target="_blank" rel="noopener">' + esc(m.url) + "</a>") : "") +
+      (d["dpp:importer"] ? row("Importer / przedstawiciel w UE", esc(d["dpp:importer"])) : "") +
+      (d["dpp:commodityCode"] ? row("Kod towarowy (TARIC)", "<span class='pill'>" + esc(d["dpp:commodityCode"]) + "</span>") : "");
 
     const comps = d["dpp:components"] || [];
     if (comps.length){
@@ -171,6 +174,8 @@
     if (co2) env += row("Ślad węglowy", "<b>" + esc(co2.value) + " " + esc(co2.unit || "kg CO2e") + "</b> <span class='pill'>" + esc(co2.methodology || "") + "</span>");
     if (d["dpp:recycledContentPct"]) env += row("Zawartość z recyklingu", "<b>" + esc(d["dpp:recycledContentPct"]) + "%</b>");
     if (d["dpp:durability"]) env += row("Trwałość / naprawialność", esc(d["dpp:durability"]));
+    if (d["dpp:endOfLife"]) env += row("Demontaż i recykling", esc(d["dpp:endOfLife"]));
+    if (d["dpp:substancesOfConcern"]) env += row("Substancje wzbudzające obawy (SVHC/SCIP)", esc(d["dpp:substancesOfConcern"]));
     if (env) document.getElementById("o-env").innerHTML = env; else document.getElementById("s-env").classList.add("hidden");
 
     const certs = d.hasCertification || [];
