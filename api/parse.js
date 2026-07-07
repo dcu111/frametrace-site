@@ -1,49 +1,21 @@
-// AI-Parser: czyta dokument (PDF/JPG/PNG) przez Claude i zwraca ustrukturyzowane pola paszportu.
-const SCHEMA = {
-  type: "object",
-  additionalProperties: false,
-  required: ["name","model","gtin","serial","manufacturer","country","www","components","co2","co2Method","recycledPct","durability","certificates","battery"],
-  properties: {
-    name: { type: "string" },
-    model: { type: "string" },
-    gtin: { type: "string" },
-    serial: { type: "string" },
-    manufacturer: { type: "string" },
-    country: { type: "string" },
-    www: { type: "string" },
-    components: {
-      type: "array",
-      items: {
-        type: "object", additionalProperties: false,
-        required: ["component","material","sharePct","origin","recycledPct"],
-        properties: {
-          component: { type: "string" }, material: { type: "string" },
-          sharePct: { type: "string" }, origin: { type: "string" }, recycledPct: { type: "string" }
-        }
-      }
-    },
-    co2: { type: "string" },
-    co2Method: { type: "string" },
-    recycledPct: { type: "string" },
-    durability: { type: "string" },
-    certificates: {
-      type: "array",
-      items: {
-        type: "object", additionalProperties: false,
-        required: ["name","number","url"],
-        properties: { name: { type: "string" }, number: { type: "string" }, url: { type: "string" } }
-      }
-    },
-    battery: {
-      type: "object", additionalProperties: false,
-      required: ["chemistry","capacityKWh","co2Class","sohPct","ddUrl"],
-      properties: {
-        chemistry: { type: "string" }, capacityKWh: { type: "string" }, co2Class: { type: "string" },
-        sohPct: { type: "string" }, ddUrl: { type: "string" }
-      }
-    }
-  }
-};
+// AI-Parser: czyta dokument (PDF/JPG/PNG) przez Google Gemini i zwraca ustrukturyzowane pola paszportu.
+const S = (props, required) => ({ type: "OBJECT", properties: props, required });
+const STR = { type: "STRING" };
+const SCHEMA = S({
+  name: STR, model: STR, gtin: STR, serial: STR, manufacturer: STR, country: STR, www: STR,
+  components: {
+    type: "ARRAY",
+    items: S({ component: STR, material: STR, sharePct: STR, origin: STR, recycledPct: STR },
+      ["component","material","sharePct","origin","recycledPct"])
+  },
+  co2: STR, co2Method: STR, recycledPct: STR, durability: STR,
+  certificates: {
+    type: "ARRAY",
+    items: S({ name: STR, number: STR, url: STR }, ["name","number","url"])
+  },
+  battery: S({ chemistry: STR, capacityKWh: STR, co2Class: STR, sohPct: STR, ddUrl: STR },
+    ["chemistry","capacityKWh","co2Class","sohPct","ddUrl"])
+}, ["name","model","gtin","serial","manufacturer","country","www","components","co2","co2Method","recycledPct","durability","certificates","battery"]);
 
 const PROMPT = `Przeanalizuj załączony dokument (certyfikat, deklarację właściwości użytkowych, kartę produktu, specyfikację lub etykietę) i wyekstrahuj dane do Cyfrowego Paszportu Produktu.
 
@@ -65,41 +37,42 @@ module.exports = async (req, res) => {
   if (!process.env.ADMIN_KEY || (req.headers["x-admin-key"] || "") !== process.env.ADMIN_KEY) {
     return res.status(401).json({ error: "Nieprawidłowy klucz operatora" });
   }
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return res.status(503).json({ error: "AI-Parser nieaktywny: dodaj ANTHROPIC_API_KEY w Vercel (Settings → Environment Variables) i zrób redeploy." });
+  const KEY = process.env.GEMINI_API_KEY;
+  if (!KEY) {
+    return res.status(503).json({ error: "AI-Parser nieaktywny: dodaj GEMINI_API_KEY w Vercel (Settings → Environment Variables) i zrób redeploy." });
   }
 
   const { media_type, data } = req.body || {};
-  const allowed = ["application/pdf", "image/jpeg", "image/png", "image/webp", "image/gif"];
+  const allowed = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
   if (!media_type || !data || !allowed.includes(media_type)) {
     return res.status(400).json({ error: "Prześlij PDF albo obraz (JPG/PNG/WebP)" });
   }
 
-  const block = media_type === "application/pdf"
-    ? { type: "document", source: { type: "base64", media_type, data } }
-    : { type: "image", source: { type: "base64", media_type, data } };
-
   try {
-    const r = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "claude-opus-4-8",
-        max_tokens: 4000,
-        messages: [{ role: "user", content: [block, { type: "text", text: PROMPT }] }],
-        output_config: { format: { type: "json_schema", schema: SCHEMA } },
-      }),
-    });
+    const r = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent",
+      {
+        method: "POST",
+        headers: { "content-type": "application/json", "X-goog-api-key": KEY },
+        body: JSON.stringify({
+          contents: [{ parts: [
+            { inline_data: { mime_type: media_type, data } },
+            { text: PROMPT }
+          ]}],
+          generationConfig: { responseMimeType: "application/json", responseSchema: SCHEMA }
+        })
+      }
+    );
     const j = await r.json();
-    if (!r.ok) return res.status(502).json({ error: (j.error && j.error.message) || ("Claude API: HTTP " + r.status) });
-    if (j.stop_reason === "refusal") return res.status(502).json({ error: "Model odmówił analizy tego dokumentu" });
-    const text = (j.content || []).filter(b => b.type === "text").map(b => b.text).join("");
+    if (!r.ok) return res.status(502).json({ error: (j.error && j.error.message) || ("Gemini API: HTTP " + r.status) });
+    if (j.promptFeedback && j.promptFeedback.blockReason) {
+      return res.status(502).json({ error: "Model odrzucił dokument: " + j.promptFeedback.blockReason });
+    }
+    const cand = (j.candidates || [])[0];
+    const text = cand && cand.content && (cand.content.parts || []).map(p => p.text || "").join("");
+    if (!text) return res.status(502).json({ error: "Pusta odpowiedź modelu" });
     const fields = JSON.parse(text);
-    return res.status(200).json({ ok: true, fields, usage: j.usage });
+    return res.status(200).json({ ok: true, fields, usage: j.usageMetadata });
   } catch (e) {
     return res.status(500).json({ error: String(e.message || e) });
   }
