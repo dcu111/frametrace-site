@@ -26,44 +26,82 @@
   .badge { font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--orange); border:1px solid #f3cdbf; background:#fdf3ef; border-radius:999px; padding:3px 10px; }
   .wrap { max-width:1200px; margin:0 auto; padding:40px 24px 90px; }
   h1 { font-size:clamp(26px,3.6vw,38px); font-weight:800; letter-spacing:-.03em; line-height:1.08; margin:10px 0 8px; }
-  .sub { color:var(--muted); max-width:70ch; margin:0 0 34px; }
+  .sub { color:var(--muted); max-width:64ch; margin:0 0 30px; }
 
   .grid { display:grid; grid-template-columns:1.15fr .85fr; gap:34px; align-items:start; }
   @media (max-width:960px){ .grid{ grid-template-columns:1fr; } }
 
-  fieldset { border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px 22px; margin:0 0 18px; }
-  legend { font-weight:700; font-size:14px; padding:0 8px; letter-spacing:-.01em; }
-  label { display:block; font-size:12.5px; font-weight:600; color:var(--muted); margin:12px 0 5px; }
+  /* ---------- pola ---------- */
+  label { display:block; font-size:12.5px; font-weight:600; color:var(--ink); margin:14px 0 5px; }
+  label .r { color:var(--orange); }
   input, select, textarea {
     width:100%; font-family:inherit; font-size:14.5px; color:var(--ink); background:var(--bg);
     border:1px solid var(--line); border-radius:10px; padding:10px 12px; outline:none;
   }
   input:focus, select:focus, textarea:focus { border-color:var(--ink); }
   textarea { min-height:74px; resize:vertical; }
-  .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  .help { font-size:12px; color:var(--faint); margin:4px 0 0; line-height:1.4; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
   @media (max-width:640px){ .row,.row3{ grid-template-columns:1fr; } }
 
-  table.dyn { width:100%; border-collapse:collapse; margin-top:10px; }
-  table.dyn th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--faint); padding:4px 6px; }
+  /* ---------- kroki ---------- */
+  .step { border:1px solid var(--line); border-radius:16px; padding:20px 22px 22px; margin:0 0 16px; background:#fff; }
+  .step-head { display:flex; gap:14px; align-items:flex-start; }
+  .step-num { flex:none; width:30px; height:30px; border-radius:50%; background:var(--ink); color:#fff; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; }
+  .step-num.ico { background:var(--soft); color:var(--ink); border:1px solid var(--line); font-size:15px; }
+  .step-title { font-weight:700; font-size:16px; letter-spacing:-.01em; display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+  .step-desc { color:var(--muted); font-size:13px; margin-top:2px; }
+  .opt { font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--faint); border:1px solid var(--line); border-radius:999px; padding:2px 8px; }
+  .step-body { padding-left:44px; margin-top:12px; }
+  @media (max-width:640px){ .step-body{ padding-left:0; } }
+
+  /* ---------- tabelki dynamiczne ---------- */
+  table.dyn { width:100%; border-collapse:collapse; margin-top:6px; }
+  table.dyn th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--faint); padding:4px 6px; font-weight:600; }
   table.dyn td { padding:4px 6px 4px 0; vertical-align:top; }
   table.dyn input { padding:8px 10px; font-size:13.5px; }
   .del { background:none; border:none; color:var(--faint); font-size:16px; cursor:pointer; padding:8px 4px; }
   .del:hover { color:#c0392b; }
-  .add { background:var(--soft); border:1px dashed var(--line); border-radius:10px; padding:8px 14px; font-family:inherit; font-size:13px; font-weight:600; color:var(--muted); cursor:pointer; margin-top:8px; }
+  .add { background:var(--soft); border:1px dashed var(--line); border-radius:10px; padding:8px 14px; font-family:inherit; font-size:13px; font-weight:600; color:var(--muted); cursor:pointer; margin-top:10px; }
   .add:hover { border-color:var(--ink); color:var(--ink); }
 
-  .btn { display:inline-flex; align-items:center; gap:8px; background:var(--ink); color:#fff; border:1px solid var(--ink);
+  /* ---------- przyciski ---------- */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--ink); color:#fff; border:1px solid var(--ink);
     padding:13px 26px; border-radius:999px; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; }
   .btn:hover { opacity:.9; }
   .btn.sec { background:#fff; color:var(--ink); border-color:var(--line); font-size:13.5px; padding:10px 18px; }
   .btn.sec:hover { border-color:var(--ink); }
+  .btn.big { width:100%; padding:15px; font-size:16px; margin-top:6px; }
   .btn[disabled] { opacity:.5; pointer-events:none; }
+
+  /* ---------- HERO AI-Parser ---------- */
+  .aihero { border:1.5px solid var(--ink); border-radius:20px; padding:26px 28px; background:linear-gradient(180deg,#fbf6f3,#ffffff); margin-bottom:8px; }
+  .aihero-badge { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--orange); background:#fdf3ef; border:1px solid #f3cdbf; border-radius:999px; padding:4px 12px; }
+  .aihero h2 { font-size:clamp(19px,2.4vw,23px); font-weight:800; letter-spacing:-.02em; margin:13px 0 6px; line-height:1.2; }
+  .aihero p { color:var(--muted); font-size:14px; margin:0 0 18px; max-width:58ch; }
+  .dropzone { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; text-align:center;
+    border:2px dashed #d8cfc8; border-radius:14px; background:#fff; padding:28px 20px; cursor:pointer; transition:border-color .15s, background .15s; }
+  .dropzone:hover { border-color:var(--orange); background:#fffaf8; }
+  .dropzone.drag { border-color:var(--orange); background:#fff3ee; }
+  .dz-ico { font-size:26px; line-height:1; }
+  .dz-main { font-weight:600; font-size:15px; }
+  .dz-sub { font-size:12px; color:var(--faint); }
+  .aibtn { background:var(--orange); border-color:var(--orange); margin-top:16px; }
+  .aibtn:hover { opacity:.92; }
+  .ai-status { font-size:13px; color:var(--muted); margin-top:12px; }
+
+  .or { text-align:center; margin:24px 0 18px; }
+  .or span { color:var(--faint); font-size:13px; font-weight:600; }
+
+  /* ---------- pasek wymagane ---------- */
+  .legendbar { font-size:12.5px; color:var(--muted); margin:0 0 18px; }
+  .legendbar .r { color:var(--orange); font-weight:700; }
 
   #batfields { display:none; }
   body.cat-baterie #batfields { display:block; }
 
-  /* wynik */
+  /* ---------- wynik ---------- */
   .result { position:sticky; top:88px; }
   .pcard { background:#141413; border:1px solid #2a2926; border-radius:18px; padding:22px; color:#fff; }
   .pc-cat { color:var(--orange); font-size:13px; font-weight:600; }
@@ -76,127 +114,243 @@
   .hint { border:1px solid var(--line); border-left:3px solid var(--ink); background:var(--soft); border-radius:12px; padding:16px 18px; margin-top:16px; font-size:13.5px; color:var(--muted); }
   .hint b { color:var(--ink); }
   .hint code { font-family:"JetBrains Mono",monospace; font-size:12px; background:#fff; border:1px solid var(--line); border-radius:6px; padding:1px 6px; }
-  .empty { border:1px dashed var(--line); border-radius:18px; padding:40px 24px; text-align:center; color:var(--faint); font-size:14px; }
+  .empty { border:1px dashed var(--line); border-radius:18px; padding:40px 26px; text-align:center; color:var(--faint); font-size:14px; }
+  .empty .big { font-size:30px; display:block; margin-bottom:10px; }
 </style>
 </head>
 <body>
 <header>
   <div class="nav">
     <a class="brand" href="/"><span class="mark"></span> FrameTrace</a>
-    <span class="badge">Generator DPP · wersja robocza (MVP)</span>
+    <span class="badge">Generator DPP · wersja robocza</span>
   </div>
 </header>
 
 <div class="wrap">
   <p class="mono">Narzędzie wewnętrzne</p>
-  <h1>Generator Cyfrowego Paszportu Produktu</h1>
-  <p class="sub">Wypełnij dane produktu, a generator utworzy: <b>unikalny identyfikator</b>, <b>trwały publiczny adres URL</b>, <b>kod QR</b> (składnia GS1 Digital Link przy podanym GTIN) i <b>plik paszportu w formacie maszynowo odczytywalnym (JSON-LD)</b>. Obsługuje wszystkie kategorie z planu prac ESPR — nie tylko meble i okna.</p>
+  <h1>Utwórz Cyfrowy Paszport Produktu</h1>
+  <p class="sub">W kilka minut utworzysz zgodny z unijnym ESPR paszport: kod QR, trwały link i plik danych dla UE. Najszybciej — wrzuć dokument, a AI wypełni pola za Ciebie.</p>
 
   <div class="grid">
     <div>
-      <fieldset style="border-style:dashed;">
-        <legend>⚡ AI-Parser — wypełnij z dokumentu</legend>
-        <label>Wrzuć certyfikat / DoP / kartę produktu (PDF, JPG, PNG) — AI odczyta dane i wypełni formularz</label>
-        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-          <input type="file" id="ai-file" accept="application/pdf,image/jpeg,image/png,image/webp" style="padding:8px;" />
-          <button type="button" class="btn sec" id="aiBtn" onclick="aiParse()">Odczytaj dokument (AI)</button>
-        </div>
-        <div id="ai-status" style="font-size:13px; color:var(--muted); margin-top:8px;"></div>
-      </fieldset>
+      <!-- ============ HERO: AI-PARSER ============ -->
+      <section class="aihero">
+        <span class="aihero-badge">✦ Najszybszy sposób</span>
+        <h2>Masz certyfikat albo kartę produktu? Wrzuć go — AI wypełni resztę.</h2>
+        <p>Deklaracja właściwości (DoP), certyfikat FSC/CE, karta katalogowa, specyfikacja czy zwykłe zdjęcie etykiety. Sztuczna inteligencja odczyta dane i wpisze je w kroki poniżej. Ty tylko sprawdzasz i publikujesz.</p>
 
-      <fieldset>
-        <legend>Kategoria i produkt</legend>
-        <div class="row">
+        <label class="dropzone" for="ai-file">
+          <input type="file" id="ai-file" accept="application/pdf,image/jpeg,image/png,image/webp" hidden />
+          <span class="dz-ico">⬆</span>
+          <span class="dz-main" id="ai-fname">Kliknij, aby wybrać plik</span>
+          <span class="dz-sub">albo przeciągnij tutaj · PDF, JPG lub PNG · do 4 MB</span>
+        </label>
+
+        <button type="button" class="btn aibtn" id="aiBtn" onclick="aiParse()">✨ Odczytaj dokument</button>
+        <div id="ai-status" class="ai-status"></div>
+      </section>
+
+      <div class="or"><span>lub wypełnij ręcznie — krok po kroku ↓</span></div>
+
+      <p class="legendbar">Pola oznaczone <span class="r">*</span> są wymagane. Reszta jest opcjonalna — im więcej danych, tym pełniejszy paszport.</p>
+
+      <!-- ============ KROK 1 ============ -->
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">1</div>
           <div>
-            <label>Kategoria produktu (ESPR / regulacje UE)</label>
-            <select id="f-cat">
-              <option value="meble">Meble</option>
-              <option value="okna">Okna i drzwi (CPR)</option>
-              <option value="baterie">Baterie i akumulatory (2023/1542)</option>
-              <option value="tekstylia">Tekstylia i obuwie</option>
-              <option value="opony">Opony</option>
-              <option value="detergenty">Detergenty</option>
-              <option value="farby">Farby i lakiery</option>
-              <option value="smary">Smary</option>
-              <option value="chemikalia">Chemikalia</option>
-              <option value="stal">Żelazo i stal</option>
-              <option value="aluminium">Aluminium</option>
-              <option value="elektronika">Elektronika / ICT</option>
-              <option value="energia">Urządzenia zw. z energią</option>
-              <option value="inna">Inna kategoria</option>
-            </select>
+            <div class="step-title">Co to za produkt?</div>
+            <div class="step-desc">Podstawowe informacje, po których rozpoznaje się produkt.</div>
           </div>
-          <div><label>Nazwa produktu *</label><input id="f-name" placeholder="np. Krzesło dębowe NORD" /></div>
         </div>
-        <div class="row3">
-          <div><label>Model / wariant</label><input id="f-model" placeholder="np. NORD-01" /></div>
-          <div><label>GTIN / EAN (opcjonalnie)</label><input id="f-gtin" placeholder="np. 5901234123457" inputmode="numeric" /></div>
-          <div><label>Nr seryjny / partii *</label><input id="f-serial" placeholder="np. 2026-07-0001" /></div>
+        <div class="step-body">
+          <div class="row">
+            <div>
+              <label>Kategoria produktu</label>
+              <select id="f-cat">
+                <option value="meble">Meble</option>
+                <option value="okna">Okna i drzwi (CPR)</option>
+                <option value="baterie">Baterie i akumulatory (2023/1542)</option>
+                <option value="tekstylia">Tekstylia i obuwie</option>
+                <option value="opony">Opony</option>
+                <option value="detergenty">Detergenty</option>
+                <option value="farby">Farby i lakiery</option>
+                <option value="smary">Smary</option>
+                <option value="chemikalia">Chemikalia</option>
+                <option value="stal">Żelazo i stal</option>
+                <option value="aluminium">Aluminium</option>
+                <option value="elektronika">Elektronika / ICT</option>
+                <option value="energia">Urządzenia zw. z energią</option>
+                <option value="inna">Inna kategoria</option>
+              </select>
+              <p class="help">Decyduje, jakich danych wymaga UE dla tej grupy produktów.</p>
+            </div>
+            <div>
+              <label>Nazwa produktu <span class="r">*</span></label>
+              <input id="f-name" placeholder="np. Krzesło dębowe NORD" />
+              <p class="help">Nazwa handlowa — tak jak na etykiecie lub w katalogu.</p>
+            </div>
+          </div>
+          <div class="row3">
+            <div>
+              <label>Model / wariant</label>
+              <input id="f-model" placeholder="np. NORD-01" />
+              <p class="help">Oznaczenie modelu, jeśli je masz.</p>
+            </div>
+            <div>
+              <label>Kod GTIN / EAN</label>
+              <input id="f-gtin" placeholder="np. 5901234123457" inputmode="numeric" />
+              <p class="help">13 cyfr spod kodu kreskowego. Nie masz? Zostaw puste.</p>
+            </div>
+            <div>
+              <label>Nr seryjny / partii <span class="r">*</span></label>
+              <input id="f-serial" placeholder="np. 2026-07-0001" />
+              <p class="help">Numer konkretnej sztuki lub partii produkcyjnej.</p>
+            </div>
+          </div>
         </div>
-      </fieldset>
+      </div>
 
-      <fieldset>
-        <legend>Producent</legend>
-        <div class="row3">
-          <div><label>Nazwa firmy *</label><input id="f-mfr" placeholder="np. Meble Nowak Sp. z o.o." /></div>
-          <div><label>Kraj</label><input id="f-country" placeholder="np. Polska" value="Polska" /></div>
-          <div><label>Strona www</label><input id="f-www" placeholder="https://…" /></div>
+      <!-- ============ KROK 2 ============ -->
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">2</div>
+          <div>
+            <div class="step-title">Kto produkuje?</div>
+            <div class="step-desc">Producent odpowiedzialny za wprowadzenie produktu na rynek.</div>
+          </div>
         </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Skład materiałowy i komponenty</legend>
-        <table class="dyn" id="t-comp">
-          <thead><tr><th>Komponent</th><th>Materiał</th><th>Udział %</th><th>Pochodzenie</th><th>Recykling %</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
-        <button type="button" class="add" onclick="addComp()">+ dodaj komponent</button>
-      </fieldset>
-
-      <fieldset>
-        <legend>Dane środowiskowe</legend>
-        <div class="row3">
-          <div><label>Ślad węglowy (kg CO₂e)</label><input id="f-co2" placeholder="np. 12,4" /></div>
-          <div><label>Metodyka</label><input id="f-method" placeholder="np. ISO 14067 / PEF" /></div>
-          <div><label>Zawartość z recyklingu (%)</label><input id="f-rec" placeholder="np. 8" /></div>
+        <div class="step-body">
+          <div class="row3">
+            <div>
+              <label>Nazwa firmy <span class="r">*</span></label>
+              <input id="f-mfr" placeholder="np. Meble Nowak Sp. z o.o." />
+              <p class="help">Pełna nazwa producenta.</p>
+            </div>
+            <div>
+              <label>Kraj</label>
+              <input id="f-country" placeholder="np. Polska" value="Polska" />
+            </div>
+            <div>
+              <label>Strona www</label>
+              <input id="f-www" placeholder="https://…" />
+            </div>
+          </div>
         </div>
-        <label>Trwałość / naprawialność / demontaż (opis)</label>
-        <textarea id="f-durab" placeholder="np. Konstrukcja skręcana, części zamienne dostępne 10 lat, demontaż bez narzędzi specjalnych."></textarea>
-      </fieldset>
+      </div>
 
-      <fieldset>
-        <legend>Certyfikaty i deklaracje</legend>
-        <table class="dyn" id="t-cert">
-          <thead><tr><th>Nazwa (np. FSC, DoP, CE)</th><th>Numer</th><th>Link do dokumentu</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
-        <button type="button" class="add" onclick="addCert()">+ dodaj certyfikat</button>
-      </fieldset>
-
-      <fieldset id="batfields">
-        <legend>Baterie — dane dodatkowe (2023/1542)</legend>
-        <div class="row3">
-          <div><label>Chemia ogniw</label><input id="f-chem" placeholder="np. LFP / NMC" /></div>
-          <div><label>Pojemność znamionowa (kWh)</label><input id="f-cap" placeholder="np. 60" /></div>
-          <div><label>Klasa śladu węglowego</label><input id="f-co2class" placeholder="np. B" /></div>
+      <!-- ============ KROK 3 ============ -->
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">3</div>
+          <div>
+            <div class="step-title">Z czego jest zrobiony?</div>
+            <div class="step-desc">Skład materiałowy — najważniejsza część paszportu dla UE.</div>
+          </div>
         </div>
-        <div class="row">
-          <div><label>Stan zdrowia — SoH (%)</label><input id="f-soh" placeholder="np. 100" /></div>
-          <div><label>Raport należytej staranności (URL)</label><input id="f-dd" placeholder="https://…" /></div>
+        <div class="step-body">
+          <table class="dyn" id="t-comp">
+            <thead><tr><th>Komponent</th><th>Materiał</th><th>Udział %</th><th>Pochodzenie</th><th>Recykling %</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <button type="button" class="add" onclick="addComp()">+ dodaj komponent</button>
+          <p class="help">Wpisz główne materiały i ich udział. Udziały nie muszą sumować się idealnie. „Pochodzenie" i „Recykling %" — jeśli wiesz.</p>
         </div>
-      </fieldset>
+      </div>
 
-      <fieldset>
-        <legend>Warstwa ograniczona (serwis / recykler / organy)</legend>
-        <label>Link do dokumentacji o ograniczonym dostępie (np. schemat demontażu)</label>
-        <input id="f-restricted" placeholder="https://… (widoczne w paszporcie jako sekcja z ograniczonym dostępem)" />
-      </fieldset>
+      <!-- ============ KROK 4 ============ -->
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">4</div>
+          <div>
+            <div class="step-title">Wpływ na środowisko <span class="opt">opcjonalne</span></div>
+            <div class="step-desc">Ślad węglowy i cyrkularność — podnoszą wiarygodność paszportu.</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <div class="row3">
+            <div>
+              <label>Ślad węglowy (kg CO₂e)</label>
+              <input id="f-co2" placeholder="np. 12,4" />
+              <p class="help">Z deklaracji EPD lub obliczeń producenta.</p>
+            </div>
+            <div>
+              <label>Metodyka</label>
+              <input id="f-method" placeholder="np. ISO 14067 / PEF / EPD" />
+            </div>
+            <div>
+              <label>Zawartość z recyklingu (%)</label>
+              <input id="f-rec" placeholder="np. 8" />
+            </div>
+          </div>
+          <label>Trwałość, naprawialność, demontaż</label>
+          <textarea id="f-durab" placeholder="np. Konstrukcja skręcana, części zamienne dostępne 10 lat, demontaż bez narzędzi specjalnych."></textarea>
+          <p class="help">Krótki opis — jak długo działa, czy da się naprawić i rozłożyć na części.</p>
+        </div>
+      </div>
 
-      <button class="btn" id="genBtn" onclick="generate()">Generuj paszport →</button>
+      <!-- ============ KROK 5 ============ -->
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">5</div>
+          <div>
+            <div class="step-title">Certyfikaty i deklaracje <span class="opt">opcjonalne</span></div>
+            <div class="step-desc">FSC, CE, DoP, PEFC, OEKO-TEX i podobne.</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <table class="dyn" id="t-cert">
+            <thead><tr><th>Nazwa (np. FSC, DoP, CE)</th><th>Numer</th><th>Link do dokumentu</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <button type="button" class="add" onclick="addCert()">+ dodaj certyfikat</button>
+          <p class="help">Nazwa systemu i numer z dokumentu. Link — jeśli certyfikat jest dostępny online.</p>
+        </div>
+      </div>
+
+      <!-- ============ KROK BATERIE (tylko dla baterii) ============ -->
+      <div class="step" id="batfields">
+        <div class="step-head">
+          <div class="step-num ico">⚡</div>
+          <div>
+            <div class="step-title">Bateria — dane dodatkowe</div>
+            <div class="step-desc">Wymagane rozporządzeniem UE 2023/1542 (paszport baterii).</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <div class="row3">
+            <div><label>Chemia ogniw</label><input id="f-chem" placeholder="np. LFP / NMC" /></div>
+            <div><label>Pojemność znamionowa (kWh)</label><input id="f-cap" placeholder="np. 60" /></div>
+            <div><label>Klasa śladu węglowego</label><input id="f-co2class" placeholder="np. B" /></div>
+          </div>
+          <div class="row">
+            <div><label>Stan zdrowia — SoH (%)</label><input id="f-soh" placeholder="np. 100" /></div>
+            <div><label>Raport należytej staranności (URL)</label><input id="f-dd" placeholder="https://…" /></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ KROK 6 ============ -->
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num ico">🔒</div>
+          <div>
+            <div class="step-title">Dokumenty poufne <span class="opt">opcjonalne</span></div>
+            <div class="step-desc">Dane tylko dla serwisu, recyklera i organów nadzoru — publicznie ukryte, dostęp na kod.</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <label>Link do dokumentacji o ograniczonym dostępie</label>
+          <input id="f-restricted" placeholder="https://… (np. schemat demontażu, wyniki testów)" />
+          <p class="help">Po publikacji dostaniesz <b>kod dostępu</b>, który przekazujesz uprawnionym. Bez kodu ta sekcja jest zablokowana.</p>
+        </div>
+      </div>
+
+      <button class="btn big" id="genBtn" onclick="generate()">Generuj paszport →</button>
     </div>
 
     <div class="result">
-      <div id="out" class="empty">Tu pojawi się karta paszportu, kod QR i pliki do publikacji.</div>
+      <div id="out" class="empty"><span class="big">▦</span>Tu pojawi się karta paszportu, kod QR i przycisk publikacji.<br>Wypełnij formularz i kliknij <b>„Generuj paszport"</b>.</div>
     </div>
   </div>
 </div>
@@ -232,7 +386,11 @@
     for (const [id,val] of [["f-name",name],["f-serial",serial],["f-mfr",mfr]]){
       document.getElementById(id).style.borderColor = val ? "" : "#c0392b";
     }
-    if (!name || !serial || !mfr) return;
+    if (!name || !serial || !mfr){
+      const miss = document.getElementById(!name ? "f-name" : !serial ? "f-serial" : "f-mfr");
+      miss.scrollIntoView({ behavior:"smooth", block:"center" }); miss.focus();
+      return;
+    }
 
     const cat = catSel.value, gtin = v("f-gtin").replace(/\D/g,"");
     const rand = Date.now().toString(36).slice(-4).toUpperCase() + Math.random().toString(36).slice(2,6).toUpperCase();
@@ -298,6 +456,8 @@
         '<button class="btn sec" onclick="navigator.clipboard.writeText(current.url); this.textContent=\'Skopiowano ✓\'">Kopiuj link</button>' +
       '</div>' +
       '<div class="hint" id="pubStatus"><b>Opublikuj teraz</b> zapisuje paszport automatycznie — po ok. 30–60 s QR i link są żywe. Ręczna alternatywa: pobierz .json i wrzuć do <code>passports/</code> w repo.</div>';
+
+    document.getElementById("out").scrollIntoView({ behavior:"smooth", block:"start" });
   }
 
   function dlJSON(){
@@ -367,7 +527,7 @@
     const st = document.getElementById("ai-status");
     const btn = document.getElementById("aiBtn");
     const f = inp.files && inp.files[0];
-    if (!f){ st.textContent = "Najpierw wybierz plik."; return; }
+    if (!f){ st.textContent = "Najpierw wybierz plik (kliknij pole powyżej)."; return; }
     if (f.size > 4 * 1024 * 1024){ st.textContent = "Plik ma ponad 4 MB — zmniejsz go (limit przesyłu)."; return; }
     const key = adminKey();
     if (!key) return;
@@ -389,7 +549,7 @@
         throw new Error(j.error || ("HTTP " + res.status));
       }
       fillForm(j.fields || {});
-      st.innerHTML = "✅ Odczytano — sprawdź i uzupełnij pola przed publikacją (człowiek zatwierdza).";
+      st.innerHTML = "✅ Odczytano i wpisano w formularz. Sprawdź kroki poniżej i uzupełnij braki — <b>Ty zatwierdzasz przed publikacją</b>.";
     } catch (e){
       st.textContent = "❌ " + e.message;
     }
@@ -427,6 +587,20 @@
       setIf("f-soh", b.sohPct); setIf("f-dd", b.ddUrl);
     }
   }
+
+  // ---------- dropzone: nazwa pliku + przeciąganie ----------
+  (function(){
+    const dz = document.querySelector(".dropzone"), inp = document.getElementById("ai-file");
+    if (!dz || !inp) return;
+    function showName(){ document.getElementById("ai-fname").textContent = (inp.files && inp.files[0]) ? inp.files[0].name : "Kliknij, aby wybrać plik"; }
+    inp.addEventListener("change", showName);
+    ["dragover","dragenter"].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add("drag"); }));
+    ["dragleave","dragend"].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove("drag"); }));
+    dz.addEventListener("drop", ev => {
+      ev.preventDefault(); dz.classList.remove("drag");
+      if (ev.dataTransfer.files && ev.dataTransfer.files.length){ inp.files = ev.dataTransfer.files; showName(); }
+    });
+  })();
 </script>
 </body>
 </html>
