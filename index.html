@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>FrameTrace · Cyfrowy Paszport Produktu dla producentów okien i mebli</title>
-<meta name="description" content="Zbieramy dane od Waszych dostawców i przygotowujemy Cyfrowy Paszport Produktu dla producentów okien i mebli. Wąska specjalizacja, gotowy wynik, bez działu compliance." />
+<title>FrameTrace · Cyfrowy Paszport Produktu (DPP)</title>
+<meta name="description" content="Zbieramy dane od Waszych dostawców i przygotowujemy Cyfrowy Paszport Produktu zgodny z przepisami UE. Zaczynamy od baterii — pierwszej branży z obowiązkiem od 18.02.2027 — i rozszerzamy usługę na kolejne grupy produktów." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -205,9 +205,6 @@
   .pc-metrics { display: flex; flex-direction: column; gap: 5px; color: #b3b2ad; font-size: 14px; }
   .pc-metrics b { color: #fff; font-weight: 500; }
   .pc-qr { width: 44px; height: 44px; border-radius: 6px; flex: none; }
-  .pc-thumb .ic-meble { display: none; }
-  body.mode-meble .pc-thumb .ic-okna { display: none; }
-  body.mode-meble .pc-thumb .ic-meble { display: block; }
 
   /* ---------- Why now (dark) ---------- */
   .why { background: var(--dark); color: #fff; border-radius: 28px; margin: 0 20px; }
@@ -221,6 +218,27 @@
   .why .stat .big { font-size: clamp(38px,4.6vw,58px); font-weight: 700; letter-spacing: -0.03em; line-height: 1; color: #e2603a; }
   .why .stat .big .unit { font-size: .4em; font-weight: 600; margin-left: 8px; letter-spacing: -0.01em; }
   .why .stat .lbl { color: #b4b4b0; font-size: 15px; margin-top: 16px; max-width: 32ch; line-height: 1.5; }
+
+  /* ---------- harmonogram regulacji (oś czasu) ---------- */
+  .roadmap { margin-top: 84px; border-top: 1px solid #262622; padding-top: 56px; }
+  .roadmap .rl-cap { font-family:"JetBrains Mono",monospace; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #7d7d7a; }
+  .rl { display: grid; grid-template-columns: repeat(5,1fr); position: relative; margin-top: 40px; }
+  .rl::before { content:""; position: absolute; top: 8px; left: 10%; right: 10%; height: 2px; background: #2e2e2b; }
+  .rl-item { position: relative; padding: 0 8px; text-align: center; }
+  .rl-dot { position: relative; z-index: 1; display: block; width: 12px; height: 12px; border-radius: 50%; background: #4a4945; margin: 2px auto 0; }
+  .rl-item.hot .rl-dot { background: #e2603a; box-shadow: 0 0 0 6px rgba(226,96,58,.18); }
+  .rl-date { font-family:"JetBrains Mono",monospace; font-size: 13.5px; color: #fff; margin-top: 18px; }
+  .rl-item.hot .rl-date { color: #e2603a; }
+  .rl-name { font-size: 13.5px; color: #b4b4b0; margin-top: 7px; line-height: 1.4; }
+  .rl-tag { display: inline-block; margin-top: 11px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7d7d7a; border: 1px solid #34332f; border-radius: 999px; padding: 3px 10px; }
+  .rl-item.hot .rl-tag { color: #e2603a; border-color: rgba(226,96,58,.45); }
+  @media (max-width: 900px){
+    .rl { grid-template-columns: 1fr; gap: 30px; margin-top: 30px; }
+    .rl::before { left: 5px; top: 8px; bottom: 8px; width: 2px; height: auto; right: auto; }
+    .rl-item { text-align: left; padding: 0 0 0 34px; }
+    .rl-dot { position: absolute; left: 0; top: 3px; margin: 0; }
+    .rl-date { margin-top: 0; }
+  }
 
   /* ---------- Offer ---------- */
   .offer {
@@ -393,38 +411,10 @@
     .offer { padding: 26px; }
   }
 
-  /* ---------- przejście trybu: Okno / Szafka ---------- */
-  #modeFx { position: fixed; inset: 0; z-index: 200; pointer-events: none; visibility: hidden; }
-  #modeFx.run { visibility: visible; pointer-events: auto; }
-  #modeFx .fx-panel { position: absolute; box-sizing: border-box; overflow: hidden; will-change: transform;
-    transition: transform .5s cubic-bezier(.65,0,.25,1); backface-visibility: hidden; }
-  #modeFx .fx-panel::before, #modeFx .fx-panel::after { content: ""; position: absolute; pointer-events: none; }
-
-  /* OKNO — dwa skrzydła: szkło, biała rama i szprosy (widoczne, gdy zamknięte) */
-  #modeFx.fx-okna .fx-panel { top: 0; height: 100%; width: calc(50% + 1px);
-    background: linear-gradient(150deg,#d6e4f5,#eef4fc 45%,#cfe0f3); border: 15px solid #f4f5f2; }
-  #modeFx.fx-okna .fx-a { left: 0; border-right-width: 7px; transform: translateX(-100%); }
-  #modeFx.fx-okna .fx-b { right: 0; border-left-width: 7px; transform: translateX(100%); }
-  #modeFx.fx-okna.close .fx-a, #modeFx.fx-okna.close .fx-b { transform: translateX(0); }
-  #modeFx.fx-okna .fx-panel::before { left: 0; right: 0; top: 50%; height: 13px; margin-top: -6px; background: #f4f5f2; }
-  #modeFx.fx-okna .fx-panel::after { inset: 0; background: linear-gradient(120deg, transparent 40%, rgba(255,255,255,.6) 50%, transparent 60%); }
-
-  /* SZAFKA — dwoje drzwiczek: drewno, wewnętrzny panel i gałki */
-  #modeFx.fx-meble .fx-panel { top: 0; height: 100%; width: calc(50% + 1px);
-    background: linear-gradient(160deg,#e7d3b6,#d3b98f); border: 13px solid #c3a882; }
-  #modeFx.fx-meble .fx-a { left: 0; border-right-width: 6px; transform: translateX(-100%); }
-  #modeFx.fx-meble .fx-b { right: 0; border-left-width: 6px; transform: translateX(100%); }
-  #modeFx.fx-meble.close .fx-a, #modeFx.fx-meble.close .fx-b { transform: translateX(0); }
-  #modeFx.fx-meble .fx-panel::after { inset: 24px; border: 3px solid rgba(120,84,48,.30); border-radius: 5px; }
-  #modeFx.fx-meble .fx-a::before { right: 9px; top: 50%; width: 16px; height: 16px; margin-top: -8px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #7a5230, #3f2510); box-shadow: 0 1px 2px rgba(0,0,0,.35); }
-  #modeFx.fx-meble .fx-b::before { left: 9px; top: 50%; width: 16px; height: 16px; margin-top: -8px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #7a5230, #3f2510); box-shadow: 0 1px 2px rgba(0,0,0,.35); }
 </style>
 </head>
 <body>
 <div id="progress"></div>
-<div id="modeFx" aria-hidden="true"><div class="fx-panel fx-a"></div><div class="fx-panel fx-b"></div></div>
 
 <header id="hdr">
   <div class="wrap nav">
@@ -433,11 +423,7 @@
       <a href="#problem">Problem</a>
       <a href="#jak">Jak działamy</a>
       <a href="#teraz">Dlaczego teraz</a>
-      <a href="/generator">Generator</a>
-      <div class="seg" id="modeSwitch">
-        <button class="seg-btn active" data-mode="okna">Okna</button>
-        <button class="seg-btn" data-mode="meble">Meble</button>
-      </div>
+      <a href="/generator.html">Paszport</a>
       <a class="btn" href="#kontakt">Skontaktuj się <span class="arw">→</span></a>
     </nav>
   </div>
@@ -449,11 +435,11 @@
   <section class="hero">
     <div class="hero-bg" id="heroBg"><span class="blob a"></span><span class="blob b"></span><span class="blob c"></span></div>
     <div class="wrap">
-      <span class="pill reveal"><span class="dot"></span> <span data-swap="hero_pill">Cyfrowy Paszport Produktu dla producentów okien</span></span>
-      <h1 class="reveal" data-d="1" data-swap="hero_h1">Automatyzacja procesu Cyfrowego Paszportu Produktu <span class="fade">w branży okienniczej.</span></h1>
-      <p class="sub reveal" data-d="2" data-swap="hero_sub">Przygotujemy Twoją firmę pod wdrożenie cyfrowych paszportów produktowych. Zbieramy i porządkujemy dane od Waszych dostawców profili, szkła, okuć i uszczelek, a Wy dostajecie gotowy paszport. Bez działu compliance i bez wdrożeń IT po Waszej stronie.</p>
+      <span class="pill reveal"><span class="dot"></span> Zgodność z regulacjami UE</span>
+      <h1 class="reveal" data-d="1">Automatyzacja Cyfrowego Paszportu Produktu <span class="fade">zanim stanie się obowiązkiem.</span></h1>
+      <p class="sub reveal" data-d="2">Przygotowujemy firmy na unijny obowiązek DPP: zbieramy i porządkujemy dane od Waszych dostawców, składamy z nich zgodny z przepisami paszport z kodem QR i pilnujemy zmian w regulacjach. Bez działu compliance i bez wdrożeń IT po Waszej stronie.</p>
       <div class="hero-cta reveal" data-d="3">
-        <a class="btn" href="/generator">Wygeneruj paszport za darmo <span class="arw">→</span></a>
+        <a class="btn" href="/generator.html">Utwórz swój paszport <span class="arw">→</span></a>
         <a class="btn ghost" href="#kontakt">Skontaktuj się z nami</a>
       </div>
       <p class="hero-note reveal" data-d="3">Bez rejestracji · wypróbuj narzędzie od razu, sam.</p>
@@ -471,17 +457,17 @@
         <div class="card reveal">
           <div class="k">// wolumen</div>
           <h3>Rosnące ilości danych</h3>
-          <p data-swap="prob1">Z każdym modelem okna i każdym dostawcą przybywa certyfikatów, deklaracji i parametrów. Ręczne ogarnięcie tego rośnie szybciej niż zespół.</p>
+          <p>Z każdym modelem produktu i każdym dostawcą przybywa certyfikatów, deklaracji i parametrów. Ręczne ogarnięcie tego rośnie szybciej niż zespół.</p>
         </div>
         <div class="card reveal" data-d="1">
           <div class="k">// identyfikowalność</div>
           <h3>Trudna pełna identyfikowalność</h3>
-          <p data-swap="prob2">Zbudowanie kompletnej ścieżki „od komponentu do gotowego okna" wymaga połączenia danych z wielu źródeł, które nigdy nie były projektowane, by się ze sobą spinać.</p>
+          <p>Zbudowanie kompletnej ścieżki „od komponentu do gotowego produktu" wymaga połączenia danych z wielu źródeł, które nigdy nie były projektowane, by się ze sobą spinać.</p>
         </div>
         <div class="card reveal" data-d="2">
           <div class="k">// kontrola</div>
           <h3>Kontrola danych od dostawców</h3>
-          <p data-swap="prob3">Kluczowe informacje o profilach, szkle i okuciach są u dostawców. Nie macie wpływu ani na ich format, ani na to, kiedy (i czy w ogóle) do Was trafią.</p>
+          <p>Kluczowe informacje o komponentach i materiałach są u dostawców. Nie macie wpływu ani na ich format, ani na to, kiedy (i czy w ogóle) do Was trafią.</p>
         </div>
         <div class="card reveal">
           <div class="k">// dostęp</div>
@@ -509,7 +495,7 @@
         <div id="appdemo" data-scene="0" role="img" aria-label="Animacja: jak działa aplikacja FrameTrace">
 
           <div class="scene" data-n="1">
-            <span class="kicker"><span class="m"></span> FrameTrace · meble i okna</span>
+            <span class="kicker"><span class="m"></span> FrameTrace · Cyfrowy Paszport Produktu</span>
             <div class="hook">Od chaosu<br>do gotowego paszportu.</div>
           </div>
 
@@ -518,7 +504,7 @@
             <div class="scan">
               <div class="scan-check">✓</div>
               <div class="dqr"></div>
-              <div class="scan-label">Płyta MDF · art. 4711</div>
+              <div class="scan-label">Ogniwo Li-ion · art. 4711</div>
               <div class="scan-line"></div>
             </div>
           </div>
@@ -527,10 +513,10 @@
             <div class="cap">Sprawdza kompletność — i <b>sam dopomina</b>.</div>
             <div class="db">
               <div class="db-top"><span class="t">Baza danych</span><span class="counter">0 / 4</span></div>
-              <div class="db-row"><span>Płyta MDF</span><span class="r">dostawca PL <span class="ok">✓</span></span></div>
-              <div class="db-row"><span>Okucia</span><span class="r">dostawca AT <span class="ok">✓</span></span></div>
-              <div class="db-row"><span>Lakier</span><span class="r">dostawca DE <span class="ok">✓</span></span></div>
-              <div class="db-row"><span>Szkło</span><span class="r">dostawca DE <span class="ok">✓</span></span></div>
+              <div class="db-row"><span>Ogniwa</span><span class="r">dostawca PL <span class="ok">✓</span></span></div>
+              <div class="db-row"><span>Elektronika BMS</span><span class="r">dostawca AT <span class="ok">✓</span></span></div>
+              <div class="db-row"><span>Elektrolit</span><span class="r">dostawca DE <span class="ok">✓</span></span></div>
+              <div class="db-row"><span>Obudowa</span><span class="r">dostawca PL <span class="ok">✓</span></span></div>
             </div>
           </div>
 
@@ -548,11 +534,11 @@
           <div class="scene" data-n="5">
             <div class="cap">Gotowy paszport — z <b>backupem UE</b>.</div>
             <div class="passport">
-              <div class="p-top2"><span class="t">Paszport produktu · meble</span><span class="p-qr2"></span></div>
+              <div class="p-top2"><span class="t">Paszport produktu · bateria</span><span class="p-qr2"></span></div>
               <div class="p-body2">
-                <div class="p-row2"><span class="l">Skład</span><span class="v">płyta · okucia · lakier</span></div>
-                <div class="p-row2"><span class="l">Ślad węglowy</span><span class="v">42 kg CO₂e</span></div>
-                <div class="p-row2"><span class="l">Deklaracje</span><span class="v"><span class="tg">DoP</span><span class="tg">CE</span></span></div>
+                <div class="p-row2"><span class="l">Skład</span><span class="v">ogniwa · BMS · obudowa</span></div>
+                <div class="p-row2"><span class="l">Ślad węglowy</span><span class="v">61,5 kg CO₂e / kWh</span></div>
+                <div class="p-row2"><span class="l">Deklaracje</span><span class="v"><span class="tg">CE</span><span class="tg">2023/1542</span></span></div>
                 <div class="badge-done"><span class="ok">✓</span> Gotowy · certyfikowany backup</div>
               </div>
             </div>
@@ -561,7 +547,7 @@
           <div class="scene" data-n="6">
             <div class="endm"></div>
             <div class="endname">FrameTrace</div>
-            <div class="endtag">Meble i okna · wdrożenie DPP pod klucz.</div>
+            <div class="endtag">Cyfrowy Paszport Produktu · wdrożenie pod klucz.</div>
           </div>
 
         </div>
@@ -582,7 +568,7 @@
         <article class="pstep active" data-i="1">
           <div class="idx">1</div>
           <h3>Audyt gotowości i mapowanie łańcucha dostaw</h3>
-          <p data-swap="how1">Sprawdzamy, jakie dane już macie, czego brakuje i gdzie jest największe ryzyko. Mapujemy pochodzenie każdego komponentu okna: profili, szkła, okuć i uszczelek.</p>
+          <p>Sprawdzamy, jakie dane już macie, czego brakuje i gdzie jest największe ryzyko. Mapujemy pochodzenie każdego komponentu produktu — od ogniw i materiałów aktywnych po elektronikę i obudowy.</p>
         </article>
         <article class="pstep" data-i="2">
           <div class="idx">2</div>
@@ -592,7 +578,7 @@
         <article class="pstep" data-i="3">
           <div class="idx">3</div>
           <h3>Gotowy Cyfrowy Paszport Produktu</h3>
-          <p data-swap="how3">Dostajecie uporządkowany paszport dla wybranych modeli okien: skład, pochodzenie i dostępne dane środowiskowe, gotowy do udostępnienia klientom eksportowym.</p>
+          <p>Dostajecie uporządkowany paszport dla wybranych modeli produktów: skład, pochodzenie i dane środowiskowe — gotowy do udostępnienia klientom, recyklerom i organom nadzoru.</p>
         </article>
       </div>
     </div>
@@ -603,7 +589,7 @@
     <div class="wrap">
       <div class="head reveal">
         <p class="mono">03 Co zawiera paszport</p>
-        <h2>Przykładowy paszport produktu: komplet danych, gotowy do udostępnienia.</h2>
+        <h2>Przykładowy paszport produktu: komplet danych wymaganych przez UE.</h2>
       </div>
 
       <!-- reusable QR glyph -->
@@ -632,49 +618,46 @@
 
       <div class="passport-cards">
         <article class="pcard reveal">
-          <div class="pc-cat"><span data-swap="pc1_cat">Okno PVC NORD 82</span> <span class="arw">↗</span></div>
+          <div class="pc-cat"><span>Bateria przemysłowa TITAN 64</span> <span class="arw">↗</span></div>
           <div class="pc-thumb">
-            <svg class="ic ic-okna" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="6" width="34" height="36" rx="1.5"/><line x1="24" y1="6" x2="24" y2="42"/><line x1="7" y1="24" x2="41" y2="24"/></svg>
-            <svg class="ic ic-meble" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="6" width="16" height="14" rx="1.5"/><path d="M13 26h22"/><path d="M15 20v6M33 20v6"/><path d="M16 26v15M32 26v15"/></svg>
+            <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="15" width="33" height="18" rx="2"/><path d="M42 21v6"/><path d="M23 19l-4.5 5.5h7L21 30"/></svg>
           </div>
-          <div class="pc-name" data-swap="pc1_name">Profil PVC · 6-komorowy</div>
-          <div class="pc-id" data-swap="pc1_id">#OK-00412</div>
+          <div class="pc-name">Li-ion LFP · magazyn energii 64 kWh</div>
+          <div class="pc-id">#BT-00412</div>
           <div class="pc-foot">
-            <div class="pc-metrics" data-swap="pc1_metrics"><span><b>18,4 kg</b> CO₂eq</span><span><b>82%</b> recykling</span></div>
+            <div class="pc-metrics"><span><b>61,5 kg</b> CO₂e / kWh</span><span><b>3 500</b> cykli</span></div>
             <svg class="pc-qr"><use href="#qr"/></svg>
           </div>
         </article>
 
         <article class="pcard reveal" data-d="1">
-          <div class="pc-cat"><span data-swap="pc2_cat">Okno aluminiowe HORYZONT</span> <span class="arw">↗</span></div>
+          <div class="pc-cat"><span>Bateria EV MODUŁ 400</span> <span class="arw">↗</span></div>
           <div class="pc-thumb">
-            <svg class="ic ic-okna" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="8" width="36" height="32" rx="1.5"/><line x1="24" y1="8" x2="24" y2="40"/></svg>
-            <svg class="ic ic-meble" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17h34"/><path d="M12 17v23M36 17v23"/><path d="M12 23h24"/></svg>
+            <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="12" width="36" height="24" rx="2"/><path d="M15 12v24M24 12v24M33 12v24"/></svg>
           </div>
-          <div class="pc-name" data-swap="pc2_name">Aluminium · profil termiczny</div>
-          <div class="pc-id" data-swap="pc2_id">#OK-00387</div>
+          <div class="pc-name">Li-ion NMC · moduł trakcyjny 400 V</div>
+          <div class="pc-id">#BT-00387</div>
           <div class="pc-foot">
-            <div class="pc-metrics" data-swap="pc2_metrics"><span><b>34,2 kg</b> CO₂eq</span><span><b>0</b> substancji SVHC</span></div>
+            <div class="pc-metrics"><span><b>16%</b> kobaltu z recyklingu</span><span><b>0</b> substancji SVHC</span></div>
             <svg class="pc-qr"><use href="#qr"/></svg>
           </div>
         </article>
 
         <article class="pcard reveal" data-d="2">
-          <div class="pc-cat"><span data-swap="pc3_cat">Drzwi balkonowe LINEA</span> <span class="arw">↗</span></div>
+          <div class="pc-cat"><span>Krzesło dębowe NORD</span> <span class="arw">↗</span></div>
           <div class="pc-thumb">
-            <svg class="ic ic-okna" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="14" y="5" width="20" height="38" rx="1.5"/><line x1="14" y1="24" x2="34" y2="24"/><line x1="30" y1="20" x2="30" y2="28"/></svg>
-            <svg class="ic ic-meble" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="8" width="30" height="32" rx="1.5"/><path d="M9 19h30M9 30h30"/><path d="M21 13.5h6M21 24.5h6M21 35h6"/></svg>
+            <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="6" width="16" height="14" rx="1.5"/><path d="M13 26h22"/><path d="M15 20v6M33 20v6"/><path d="M16 26v15M32 26v15"/></svg>
           </div>
-          <div class="pc-name" data-swap="pc3_name">PVC + szkło 3-szybowe</div>
-          <div class="pc-id" data-swap="pc3_id">#OK-00521</div>
+          <div class="pc-name">Dąb europejski, FSC</div>
+          <div class="pc-id">#MB-00412</div>
           <div class="pc-foot">
-            <div class="pc-metrics" data-swap="pc3_metrics"><span><b>26,1 kg</b> CO₂eq</span><span>Łatwy demontaż</span></div>
+            <div class="pc-metrics"><span><b>12,4 kg</b> CO₂eq</span><span><b>94%</b> recykling</span></div>
             <svg class="pc-qr"><use href="#qr"/></svg>
           </div>
         </article>
       </div>
       <div class="callout reveal">
-        <p data-swap="pass_callout"><strong>Ważne:</strong> dla okien nie zostały jeszcze podane konkretne wytyczne DPP. Póki co paszport opieramy na wytycznych obowiązujących dla innych grup produktów i przygotowujemy Waszą firmę tak, by była sprawnie gotowa na te zmiany. Gdy tylko oficjalne wytyczne dla okien będą dostępne, dostosujemy paszport do wszystkich wymogów.</p>
+        <p><strong>Ważne:</strong> dla baterii wymagania są już ustalone prawnie — rozporządzenie (UE) 2023/1542 (art. 77 i załącznik XIII) precyzyjnie określa zakres danych. Dla kolejnych branż (aluminium i stal, tekstylia, elektronika, meble, materiały budowlane) szczegółowe akty dopiero powstają — tam przygotowujemy paszporty wyprzedzająco i aktualizujemy je, gdy przepisy się finalizują.</p>
       </div>
     </div>
   </section>
@@ -687,7 +670,7 @@
         <h2>Wygeneruj Cyfrowy Paszport swojego produktu — za darmo.</h2>
         <p>Wpisz dane albo po prostu wrzuć certyfikat czy kartę produktu, a nasze narzędzie w kilka minut utworzy gotowy paszport: kod QR, trwały link i plik danych zgodny z wymogami UE. Bez rejestracji, bez zobowiązań.</p>
         <div class="gencta-cta">
-          <a class="btn" href="/generator">Wygeneruj paszport za darmo <span class="arw">→</span></a>
+          <a class="btn" href="/generator.html">Wygeneruj paszport za darmo <span class="arw">→</span></a>
           <span class="gencta-note">✨ Z AI-Parserem — odczyta dane wprost z Twojego dokumentu.</span>
         </div>
       </div>
@@ -699,12 +682,22 @@
     <div class="why reveal">
       <div class="wrap">
         <p class="mono">04 Dlaczego teraz</p>
-        <h2>Zacznij porządkować dane, zanim regulacja wejdzie w życie.</h2>
-        <p data-swap="why_p">Obowiązek DPP dla okien wejdzie realnie w drugiej połowie dekady, ale zebranie pełnych danych od dostawców, szczególnie zagranicznych, trwa miesiącami, nie dniami. Firmy, które zaczną porządkować dane teraz, unikną pośpiechu, gdy regulacja wejdzie w życie, i zyskają przewagę u klientów eksportowych, którzy coraz częściej pytają o pochodzenie i ślad środowiskowy produktu.</p>
+        <h2>Terminy są już w kalendarzu. Pierwszy: luty 2027.</h2>
+        <p>Obowiązek paszportu dla baterii wchodzi 18 lutego 2027 r., a kolejne branże mają swoje daty w planie prac ESPR. Zebranie kompletnych danych od dostawców — szczególnie zagranicznych — trwa miesiącami, nie dniami. Firmy, które zaczną teraz, unikną pośpiechu na ostatniej prostej i zyskają przewagę u klientów, którzy już dziś pytają o pochodzenie i ślad środowiskowy produktów.</p>
         <div class="stats reveal">
-          <div class="stat"><div class="big" data-swap="s1_big">2028/2029</div><div class="lbl" data-swap="s1_lbl">Orientacyjny termin przyjęcia norm i aktu delegowanego dla okien w pierwszym planie prac CPR. Obowiązek DPP realnie ok. 2030/2031.</div></div>
-          <div class="stat"><div class="big" data-swap="s2_big">~57<span class="unit">mld EUR</span></div><div class="lbl" data-swap="s2_lbl">Wartość rynku okien i drzwi w UE w 2025 r., z prognozą wzrostu do ok. 75 mld USD do 2031.</div></div>
-          <div class="stat"><div class="big" data-swap="s3_big">&gt;1<span class="unit">mld</span></div><div class="lbl" data-swap="s3_lbl">Tyle nowych okien zostanie sprzedanych w UE do 2030 r. (Glass for Europe).</div></div>
+          <div class="stat"><div class="big">18.02.2027</div><div class="lbl">Od tego dnia baterie EV, LMT i przemysłowe &gt;2 kWh muszą mieć cyfrowy paszport (rozporządzenie 2023/1542).</div></div>
+          <div class="stat"><div class="big">30+<span class="unit">grup produktów</span></div><div class="lbl">Tyle kategorii obejmie obowiązek DPP w kolejnych latach zgodnie z rozporządzeniem ESPR.</div></div>
+          <div class="stat"><div class="big">6–12<span class="unit">miesięcy</span></div><div class="lbl">Tyle realnie zajmuje zebranie kompletu danych od dostawców. Dlatego zaczyna się wcześniej, nie na deadline.</div></div>
+        </div>
+        <div class="roadmap reveal">
+          <p class="rl-cap">Harmonogram — kiedy które branże dostają obowiązek</p>
+          <div class="rl">
+            <div class="rl-item hot"><span class="rl-dot"></span><div class="rl-date">18.02.2027</div><div class="rl-name">Baterie: EV, LMT i przemysłowe &gt;2 kWh</div><span class="rl-tag">Ustalone prawnie</span></div>
+            <div class="rl-item"><span class="rl-dot"></span><div class="rl-date">2027</div><div class="rl-name">Aluminium, stal i żelazo — akt delegowany ESPR</div><span class="rl-tag">Spodziewane</span></div>
+            <div class="rl-item"><span class="rl-dot"></span><div class="rl-date">2027/2028</div><div class="rl-name">Tekstylia i odzież</div><span class="rl-tag">Szacowane</span></div>
+            <div class="rl-item"><span class="rl-dot"></span><div class="rl-date">~2028</div><div class="rl-name">Elektronika i ICT</div><span class="rl-tag">Szacowane</span></div>
+            <div class="rl-item"><span class="rl-dot"></span><div class="rl-date">2029–2030</div><div class="rl-name">Meble, materiały budowlane i okna</div><span class="rl-tag">Szacowane</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -715,12 +708,12 @@
     <div class="wrap about-grid">
       <div class="reveal">
         <p class="mono">06 O nas</p>
-        <h2>Dwie branże. Jeden temat.</h2>
+        <h2>Jeden temat: paszport produktu.</h2>
       </div>
       <div class="reveal" data-d="1">
-        <p class="body">FrameTrace <strong>specjalizuje się w automatyzacji procesów związanych z Cyfrowym Paszportem Produktu dla producentów okien i mebli</strong>. Znamy specyfikę łańcuchów dostaw obu branż (profile PVC i aluminium, szkło oraz okucia w oknach; drewno, płyty, okucia i lakiery w meblach) i na bieżąco śledzimy rozwój regulacji unijnych (CPR, ESPR), żeby Wasza firma nie musiała robić tego samodzielnie.</p>
+        <p class="body">FrameTrace <strong>zapewnia cały proces wdrożenia Cyfrowego Paszportu Produktu</strong> — od audytu danych i zebrania brakujących informacji od dostawców, przez przygotowanie zgodnego z przepisami paszportu z kodem QR i publiczną stroną, po aktualizacje i pilnowanie zmian w regulacjach. Obsługujemy kolejne branże zgodnie z kalendarzem UE — od baterii, przez aluminium i stal, tekstylia i elektronikę, po meble i materiały budowlane. Regulacje śledzimy na bieżąco, żeby Wasza firma nie musiała robić tego samodzielnie.</p>
         <div class="callout" style="margin-top:32px;">
-          <p data-swap="about_callout">Uwaga: stosowany przez nas schemat danych to schemat przygotowawczy oparty na analogicznych, już obowiązujących regulacjach UE (m.in. Battery Regulation, ESPR). Normy techniczne DPP dla okien są wciąż w opracowaniu, a ich finalizacja spodziewana jest około połowy dekady.</p>
+          <p>Uwaga: dla baterii stosujemy zakres danych wprost z rozporządzenia (UE) 2023/1542. Dla branż, których akty delegowane ESPR jeszcze nie powstały, stosujemy schemat przygotowawczy oparty na już obowiązujących regulacjach — i aktualizujemy go, gdy przepisy się finalizują.</p>
         </div>
       </div>
     </div>
@@ -762,7 +755,7 @@
 <footer>
   <div class="wrap foot">
     <div class="brand" style="font-size:15px;"><span class="mark"></span> FrameTrace</div>
-    <div>© <span id="year"></span> FrameTrace · Cyfrowy Paszport Produktu dla producentów okien i mebli</div>
+    <div>© <span id="year"></span> FrameTrace · Cyfrowy Paszport Produktu</div>
   </div>
 </footer>
 
@@ -849,106 +842,6 @@
     es.forEach((e) => { if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
   }, { threshold: 0.14 });
   document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
-
-  // mode switch: Okna / Meble
-  const SWAP = {
-    hero_pill: { okna: 'Cyfrowy Paszport Produktu dla producentów okien', meble: 'Cyfrowy Paszport Produktu dla producentów mebli' },
-    hero_h1: {
-      okna: 'Automatyzacja procesu Cyfrowego Paszportu Produktu <span class="fade">w branży okienniczej.</span>',
-      meble: 'Automatyzacja procesu Cyfrowego Paszportu Produktu <span class="fade">w branży meblarskiej.</span>'
-    },
-    hero_sub: {
-      okna: 'Przygotujemy Twoją firmę pod wdrożenie cyfrowych paszportów produktowych. Zbieramy i porządkujemy dane od Waszych dostawców profili, szkła, okuć i uszczelek, a Wy dostajecie gotowy paszport. Bez działu compliance i bez wdrożeń IT po Waszej stronie.',
-      meble: 'Przygotujemy Twoją firmę pod wdrożenie cyfrowych paszportów produktowych. Zbieramy i porządkujemy dane od Waszych dostawców drewna, płyt, okuć i lakierów, a Wy dostajecie gotowy paszport. Bez działu compliance i bez wdrożeń IT po Waszej stronie.'
-    },
-    prob1: {
-      okna: 'Z każdym modelem okna i każdym dostawcą przybywa certyfikatów, deklaracji i parametrów. Ręczne ogarnięcie tego rośnie szybciej niż zespół.',
-      meble: 'Z każdym modelem mebla i każdym dostawcą przybywa certyfikatów, deklaracji i parametrów. Ręczne ogarnięcie tego rośnie szybciej niż zespół.'
-    },
-    prob2: {
-      okna: 'Zbudowanie kompletnej ścieżki „od komponentu do gotowego okna" wymaga połączenia danych z wielu źródeł, które nigdy nie były projektowane, by się ze sobą spinać.',
-      meble: 'Zbudowanie kompletnej ścieżki „od komponentu do gotowego mebla" wymaga połączenia danych z wielu źródeł, które nigdy nie były projektowane, by się ze sobą spinać.'
-    },
-    prob3: {
-      okna: 'Kluczowe informacje o profilach, szkle i okuciach są u dostawców. Nie macie wpływu ani na ich format, ani na to, kiedy (i czy w ogóle) do Was trafią.',
-      meble: 'Kluczowe informacje o drewnie, płytach i okuciach są u dostawców. Nie macie wpływu ani na ich format, ani na to, kiedy (i czy w ogóle) do Was trafią.'
-    },
-    how1: {
-      okna: 'Sprawdzamy, jakie dane już macie, czego brakuje i gdzie jest największe ryzyko. Mapujemy pochodzenie każdego komponentu okna: profili, szkła, okuć i uszczelek.',
-      meble: 'Sprawdzamy, jakie dane już macie, czego brakuje i gdzie jest największe ryzyko. Mapujemy pochodzenie każdego komponentu mebla: drewna, płyt, okuć i lakierów.'
-    },
-    how3: {
-      okna: 'Dostajecie uporządkowany paszport dla wybranych modeli okien: skład, pochodzenie i dostępne dane środowiskowe, gotowy do udostępnienia klientom eksportowym.',
-      meble: 'Dostajecie uporządkowany paszport dla wybranych modeli mebli: skład, pochodzenie i dostępne dane środowiskowe, gotowy do udostępnienia klientom eksportowym.'
-    },
-    why_p: {
-      okna: 'Obowiązek DPP dla okien wejdzie realnie w drugiej połowie dekady, ale zebranie pełnych danych od dostawców, szczególnie zagranicznych, trwa miesiącami, nie dniami. Firmy, które zaczną porządkować dane teraz, unikną pośpiechu, gdy regulacja wejdzie w życie, i zyskają przewagę u klientów eksportowych, którzy coraz częściej pytają o pochodzenie i ślad środowiskowy produktu.',
-      meble: 'Obowiązek DPP dla mebli wejdzie realnie w drugiej połowie dekady, ale zebranie pełnych danych od dostawców, szczególnie zagranicznych, trwa miesiącami, nie dniami. Firmy, które zaczną porządkować dane teraz, unikną pośpiechu, gdy regulacja wejdzie w życie, i zyskają przewagę u klientów eksportowych, którzy coraz częściej pytają o pochodzenie i ślad środowiskowy produktu.'
-    },
-    s1_big: { okna: '2028/2029', meble: '2028' },
-    s1_lbl: {
-      okna: 'Orientacyjny termin przyjęcia norm i aktu delegowanego dla okien w pierwszym planie prac CPR. Obowiązek DPP realnie ok. 2030/2031.',
-      meble: 'Orientacyjny termin przyjęcia wytycznych dla mebli w pierwszym planie prac ESPR.'
-    },
-    s2_big: { okna: '~57<span class="unit">mld EUR</span>', meble: '140<span class="unit">mld EUR</span>' },
-    s2_lbl: {
-      okna: 'Wartość rynku okien i drzwi w UE w 2025 r., z prognozą wzrostu do ok. 75 mld USD do 2031.',
-      meble: 'Wartość rynku mebli w UE wskazana przez Komisję w planie prac.'
-    },
-    s3_big: { okna: '&gt;1<span class="unit">mld</span>', meble: '10<span class="unit">mln ton</span>' },
-    s3_lbl: {
-      okna: 'Tyle nowych okien zostanie sprzedanych w UE do 2030 r. (Glass for Europe).',
-      meble: 'Tyle mebli jest wyrzucanych rocznie w UE.'
-    },
-    pc1_cat: { okna: 'Okno PVC NORD 82', meble: 'Krzesło dębowe NORD' },
-    pc1_name: { okna: 'Profil PVC · 6-komorowy', meble: 'Dąb europejski, FSC' },
-    pc1_id: { okna: '#OK-00412', meble: '#MB-00412' },
-    pc1_metrics: { okna: '<span><b>18,4 kg</b> CO₂eq</span><span><b>82%</b> recykling</span>', meble: '<span><b>12,4 kg</b> CO₂eq</span><span><b>94%</b> recykling</span>' },
-    pc2_cat: { okna: 'Okno aluminiowe HORYZONT', meble: 'Stół jadalniany HOLM' },
-    pc2_name: { okna: 'Aluminium · profil termiczny', meble: 'Sosna skandynawska' },
-    pc2_id: { okna: '#OK-00387', meble: '#MB-00387' },
-    pc2_metrics: { okna: '<span><b>34,2 kg</b> CO₂eq</span><span><b>0</b> substancji SVHC</span>', meble: '<span><b>28,7 kg</b> CO₂eq</span><span><b>0</b> substancji SVHC</span>' },
-    pc3_cat: { okna: 'Drzwi balkonowe LINEA', meble: 'Komoda LIND' },
-    pc3_name: { okna: 'PVC + szkło 3-szybowe', meble: 'Sklejka brzozowa' },
-    pc3_id: { okna: '#OK-00521', meble: '#MB-00521' },
-    pc3_metrics: { okna: '<span><b>26,1 kg</b> CO₂eq</span><span>Łatwy demontaż</span>', meble: '<span><b>19,1 kg</b> CO₂eq</span><span>Łatwy demontaż</span>' },
-    pass_callout: {
-      okna: '<strong>Ważne:</strong> dla okien nie zostały jeszcze podane konkretne wytyczne DPP. Póki co paszport opieramy na wytycznych obowiązujących dla innych grup produktów i przygotowujemy Waszą firmę tak, by była sprawnie gotowa na te zmiany. Gdy tylko oficjalne wytyczne dla okien będą dostępne, dostosujemy paszport do wszystkich wymogów.',
-      meble: '<strong>Ważne:</strong> dla mebli nie zostały jeszcze podane konkretne wytyczne DPP. Póki co paszport opieramy na wytycznych obowiązujących dla innych grup produktów i przygotowujemy Waszą firmę tak, by była sprawnie gotowa na te zmiany. Gdy tylko oficjalne wytyczne dla mebli będą dostępne, dostosujemy paszport do wszystkich wymogów.'
-    },
-    about_callout: {
-      okna: 'Uwaga: stosowany przez nas schemat danych to schemat przygotowawczy oparty na analogicznych, już obowiązujących regulacjach UE (m.in. Battery Regulation, ESPR). Normy techniczne DPP dla okien są wciąż w opracowaniu, a ich finalizacja spodziewana jest około połowy dekady.',
-      meble: 'Uwaga: stosowany przez nas schemat danych to schemat przygotowawczy oparty na analogicznych, już obowiązujących regulacjach UE (m.in. Battery Regulation, ESPR). Normy techniczne DPP dla mebli są wciąż w opracowaniu, a ich finalizacja spodziewana jest około połowy dekady.'
-    }
-  };
-  const swapNodes = document.querySelectorAll("[data-swap]");
-  const segBtns = document.querySelectorAll("#modeSwitch .seg-btn");
-  function applyMode(mode){
-    document.body.classList.remove("mode-okna","mode-meble");
-    document.body.classList.add("mode-" + mode);
-    swapNodes.forEach((n) => {
-      const v = SWAP[n.getAttribute("data-swap")];
-      if (v && v[mode] != null) n.innerHTML = v[mode];
-    });
-    segBtns.forEach((b) => b.classList.toggle("active", b.dataset.mode === mode));
-  }
-
-  // przejście: Okna = rozsuwane okno, Meble = otwierana szuflada
-  const fx = document.getElementById("modeFx");
-  let fxBusy = false;
-  function switchMode(mode){
-    const cur = document.body.classList.contains("mode-meble") ? "meble" : "okna";
-    if (mode === cur || fxBusy) return;
-    if (reduce || !fx){ applyMode(mode); return; }
-    fxBusy = true;
-    fx.className = "run fx-" + mode;
-    requestAnimationFrame(() => requestAnimationFrame(() => fx.classList.add("close")));
-    setTimeout(() => applyMode(mode), 540);               // podmiana treści, gdy zasłonięte
-    setTimeout(() => fx.classList.remove("close"), 860);  // krótkie przytrzymanie, potem otwarcie
-    setTimeout(() => { fx.className = ""; fxBusy = false; }, 1400);
-  }
-  segBtns.forEach((b) => b.addEventListener("click", () => switchMode(b.dataset.mode)));
-  applyMode("okna");
 
   // sticky "how it works": highlight active step near viewport center
   const steps = [...document.querySelectorAll("#howSteps .pstep")];
