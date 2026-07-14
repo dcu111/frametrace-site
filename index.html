@@ -206,6 +206,48 @@
   .pc-metrics b { color: #fff; font-weight: 500; }
   .pc-qr { width: 44px; height: 44px; border-radius: 6px; flex: none; }
 
+  /* ---------- Cennik ---------- */
+  .plans { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; align-items: stretch; }
+  @media (max-width: 1020px){ .plans{ grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 640px){ .plans{ grid-template-columns: 1fr; } }
+  .plan { border: 1px solid var(--line); border-radius: var(--radius); padding: 28px 24px; background: var(--bg);
+    display: flex; flex-direction: column; position: relative;
+    transition: transform .3s var(--ease), border-color .3s ease, box-shadow .3s ease; }
+  .plan:hover { transform: translateY(-3px); box-shadow: 0 12px 40px -20px rgba(0,0,0,.18); }
+  .plan.hot { background: #141413; border-color: #141413; box-shadow: 0 24px 54px -24px rgba(0,0,0,.5); }
+  .plan .flag { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #e2603a; color: #fff;
+    font-size: 11.5px; font-weight: 600; letter-spacing: .06em; padding: 5px 13px; border-radius: 999px; white-space: nowrap; }
+  .plan h3 { font-size: 18px; font-weight: 700; margin: 0; letter-spacing: -.01em; }
+  .plan.hot h3 { color: #fff; }
+  .plan .price { margin: 18px 0 4px; font-size: 42px; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+  .plan.hot .price { color: #fff; }
+  .plan .price .cur { font-size: .5em; font-weight: 600; vertical-align: 14px; margin-right: 2px; }
+  .plan .price .per { font-size: 14px; color: var(--faint); font-weight: 500; letter-spacing: 0; }
+  .plan.hot .price .per { color: #8f8e8a; }
+  .plan .annual { display: inline-block; font-size: 12px; color: var(--muted); margin-top: 10px;
+    background: var(--soft); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; }
+  .plan .annual b { color: var(--ink); font-weight: 600; }
+  .plan.hot .annual { background: #1d1c1a; border-color: #2a2926; color: #8f8e8a; }
+  .plan.hot .annual b { color: #e2603a; }
+  .plan ul { list-style: none; padding: 0; margin: 18px 0 26px; flex: 1; }
+  .plan li { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px dashed var(--line); font-size: 14px; color: var(--muted); }
+  .plan li:last-child { border-bottom: none; }
+  .plan.hot li { color: #b3b2ad; border-bottom-color: #2a2926; }
+  .plan li .tick { width: 18px; height: 18px; border-radius: 50%; background: var(--soft); color: var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; font-size: 10.5px; font-weight: 700; flex: none; margin-top: 2px; }
+  .plan.hot li .tick { background: rgba(226,96,58,.16); color: #e2603a; }
+  .plan li b { color: var(--ink); font-weight: 600; }
+  .plan.hot li b { color: #fff; }
+  .plan .btn { width: 100%; }
+  .plan.hot .btn { background: #e2603a; border-color: #e2603a; }
+  .bill-seg { margin-top: 24px; }
+  .plan .annual[hidden] { display: none; }
+  .plans-note { margin-top: 24px; text-align: center; color: var(--faint); font-size: 13.5px; }
+  .plans-cta { margin-top: 36px; border: 1px solid var(--line); border-left: 3px solid var(--ink); background: var(--soft);
+    border-radius: 14px; padding: 20px 26px; display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .plans-cta p { margin: 0; color: var(--muted); font-size: 15px; max-width: 62ch; }
+  .plans-cta p strong { color: var(--ink); }
+
   /* ---------- Why now (dark) ---------- */
   .why { background: var(--dark); color: #fff; border-radius: 28px; margin: 0 20px; }
   @media (max-width: 640px){ .why{ margin: 0 12px; border-radius: 22px; } }
@@ -423,6 +465,7 @@
       <a href="#problem">Problem</a>
       <a href="#jak">Jak działamy</a>
       <a href="#teraz">Dlaczego teraz</a>
+      <a href="#cennik">Cennik</a>
       <a href="/generator.html">Paszport</a>
       <a class="btn" href="#kontakt">Skontaktuj się <span class="arw">→</span></a>
     </nav>
@@ -436,7 +479,7 @@
     <div class="hero-bg" id="heroBg"><span class="blob a"></span><span class="blob b"></span><span class="blob c"></span></div>
     <div class="wrap">
       <span class="pill reveal"><span class="dot"></span> Zgodność z regulacjami UE</span>
-      <h1 class="reveal" data-d="1">Automatyzacja Cyfrowego Paszportu Produktu <span class="fade">zanim stanie się obowiązkiem.</span></h1>
+      <h1 class="reveal" data-d="1">Automatyzacja Cyfrowego Paszportu Produktu.</h1>
       <p class="sub reveal" data-d="2">Przygotowujemy firmy na unijny obowiązek DPP: zbieramy i porządkujemy dane od Waszych dostawców, składamy z nich zgodny z przepisami paszport z kodem QR i pilnujemy zmian w regulacjach. Bez działu compliance i bez wdrożeń IT po Waszej stronie.</p>
       <div class="hero-cta reveal" data-d="3">
         <a class="btn" href="/generator.html">Utwórz swój paszport <span class="arw">→</span></a>
@@ -703,6 +746,96 @@
     </div>
   </section>
 
+  <!-- CENNIK -->
+  <section id="cennik" class="divider">
+    <div class="wrap">
+      <div class="head reveal">
+        <p class="mono">05 Cennik</p>
+        <h2>Proste plany, które załatwią za Ciebie DPP.</h2>
+        <div class="bill-seg">
+          <div class="seg" id="billSwitch">
+            <button class="seg-btn active" data-bill="m">Miesięcznie</button>
+            <button class="seg-btn" data-bill="y">Rocznie — 20% taniej</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="plans">
+        <article class="plan reveal">
+          <h3>Bezpłatny</h3>
+          <div class="price"><span class="cur">€</span>0</div>
+          <ul>
+            <li><span class="tick">✓</span><span>5 paszportów produktów</span></li>
+            <li><span class="tick">✓</span><span>Asystent AI 24/7 — pomoc w obsłudze i przepisach</span></li>
+            <li><span class="tick">✓</span><span>Kody QR i publiczne strony paszportów</span></li>
+            <li><span class="tick">✓</span><span>Import z pliku (CSV, Excel, JSON)</span></li>
+            <li><span class="tick">✓</span><span>Eksport PDF</span></li>
+            <li><span class="tick">✓</span><span>Szablony branżowe ze statusem wytycznych UE</span></li>
+            <li><span class="tick">✓</span><span>Dokumenty i certyfikaty (PDF, JPG, PNG)</span></li>
+            <li><span class="tick">✓</span><span>Gwarancja aktualizacji pod nowe przepisy UE</span></li>
+          </ul>
+          <a class="btn ghost" href="/generator.html">Zacznij za darmo</a>
+        </article>
+
+        <article class="plan reveal" data-d="1" data-pm="12" data-py="120">
+          <h3>Starter</h3>
+          <div class="price"><span class="cur">€</span><span class="val">12</span><span class="per"> /miesiąc</span></div>
+          <div class="annual" hidden>Plan roczny — <b>20% taniej</b></div>
+          <ul>
+            <li><span class="tick">✓</span><span>100 paszportów</span></li>
+            <li><span class="tick">✓</span><span>Wszystko z planu Bezpłatnego</span></li>
+            <li><span class="tick">✓</span><span>Historia wersji paszportu</span></li>
+            <li><span class="tick">✓</span><span>Przypomnienia o terminach regulacji dla Twojej branży</span></li>
+            <li><span class="tick">✓</span><span>Odpowiedź człowieka do 24 h + asystent AI 24/7</span></li>
+          </ul>
+          <a class="btn ghost" href="#kontakt">Zarezerwuj dostęp</a>
+        </article>
+
+        <article class="plan hot reveal" data-d="2" data-pm="24" data-py="240">
+          <span class="flag">Najczęściej wybierany</span>
+          <h3>Pro</h3>
+          <div class="price"><span class="cur">€</span><span class="val">24</span><span class="per"> /miesiąc</span></div>
+          <div class="annual" hidden>Plan roczny — <b>20% taniej</b></div>
+          <ul>
+            <li><span class="tick">✓</span><span>450 paszportów</span></li>
+            <li><span class="tick">✓</span><span>Wszystko z planu Starter</span></li>
+            <li><span class="tick">✓</span><span>Dostęp przez API — Twój system sam tworzy paszporty</span></li>
+            <li><span class="tick">✓</span><span>Analityka skanów paszportów</span></li>
+            <li><span class="tick">✓</span><span>Własna marka na stronach paszportów</span></li>
+            <li><span class="tick">✓</span><span>Eksport zbiorczy (CSV, JSON, XLSX)</span></li>
+            <li><span class="tick">✓</span><span>Odpowiedź człowieka do 24 h + asystent AI 24/7</span></li>
+          </ul>
+          <a class="btn" href="#kontakt">Zarezerwuj dostęp <span class="arw">→</span></a>
+        </article>
+
+        <article class="plan reveal" data-d="3" data-pm="89" data-py="890">
+          <h3>Unlimited</h3>
+          <div class="price"><span class="cur">€</span><span class="val">89</span><span class="per"> /miesiąc</span></div>
+          <div class="annual" hidden>Plan roczny — <b>20% taniej</b></div>
+          <ul>
+            <li><span class="tick">✓</span><span>Paszporty bez limitu</span></li>
+            <li><span class="tick">✓</span><span>Wszystko z planu Pro</span></li>
+            <li><span class="tick">✓</span><span>Integracje z PIM i ERP (Ergonode, Akeneo, Comarch)</span></li>
+            <li><span class="tick">✓</span><span>10 miejsc w zespole (role i uprawnienia)</span></li>
+            <li><span class="tick">✓</span><span>Webhooki z gwarancją dostarczenia</span></li>
+            <li><span class="tick">✓</span><span>Wyższe limity API (2000+ żądań/h)</span></li>
+            <li><span class="tick">✓</span><span>Własna domena paszportów (dpp.twojafirma.pl)</span></li>
+            <li><span class="tick">✓</span><span>Onboarding 1:1 + odpowiedź człowieka do 24 h</span></li>
+          </ul>
+          <a class="btn ghost" href="#kontakt">Zarezerwuj dostęp</a>
+        </article>
+      </div>
+
+      <p class="plans-note">Ceny startowe z przedsprzedaży — rezerwując dostęp blokujesz dzisiejszą cenę.
+      Plan roczny — 20% taniej niż miesięczny.</p>
+
+      <div class="plans-cta reveal">
+        <p><strong>Wolisz, żebyśmy zrobili to za Ciebie?</strong> Audyt danych, zebranie informacji od dostawców i gotowe, zgodne z przepisami paszporty — wdrożenie pod klucz z wyceną indywidualną.</p>
+        <a class="btn" href="#kontakt">Porozmawiajmy <span class="arw">→</span></a>
+      </div>
+    </div>
+  </section>
+
   <!-- O NAS -->
   <section id="o-nas" class="divider">
     <div class="wrap about-grid">
@@ -711,7 +844,7 @@
         <h2>Jeden temat: paszport produktu.</h2>
       </div>
       <div class="reveal" data-d="1">
-        <p class="body">FrameTrace <strong>zapewnia cały proces wdrożenia Cyfrowego Paszportu Produktu</strong> — od audytu danych i zebrania brakujących informacji od dostawców, przez przygotowanie zgodnego z przepisami paszportu z kodem QR i publiczną stroną, po aktualizacje i pilnowanie zmian w regulacjach. Obsługujemy kolejne branże zgodnie z kalendarzem UE — od baterii, przez aluminium i stal, tekstylia i elektronikę, po meble i materiały budowlane. Regulacje śledzimy na bieżąco, żeby Wasza firma nie musiała robić tego samodzielnie.</p>
+        <p class="body">FrameTrace <strong>zapewnia cały proces wdrożenia Cyfrowego Paszportu Produktu</strong> — od audytu danych i zebrania brakujących informacji od dostawców, przez przygotowanie zgodnego z przepisami paszportu z kodem QR i publiczną stroną, po integracje z Waszymi systemami (PIM, ERP), aktualizacje i pilnowanie zmian w regulacjach. Obsługujemy kolejne branże zgodnie z kalendarzem UE — od baterii, przez aluminium i stal, tekstylia i elektronikę, po meble i materiały budowlane. Regulacje śledzimy na bieżąco, żeby Wasza firma nie musiała robić tego samodzielnie.</p>
         <div class="callout" style="margin-top:32px;">
           <p>Uwaga: dla baterii stosujemy zakres danych wprost z rozporządzenia (UE) 2023/1542. Dla branż, których akty delegowane ESPR jeszcze nie powstały, stosujemy schemat przygotowawczy oparty na już obowiązujących regulacjach — i aktualizujemy go, gdy przepisy się finalizują.</p>
         </div>
@@ -842,6 +975,25 @@
     es.forEach((e) => { if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
   }, { threshold: 0.14 });
   document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+  // cennik: przełącznik rozliczenia miesięcznego / rocznego (roczne = cena miesięczna -20%)
+  const billBtns = document.querySelectorAll("#billSwitch .seg-btn");
+  const fmtEur = (v) => Math.round(v).toString();
+  function applyBilling(mode){
+    document.querySelectorAll(".plan[data-pm]").forEach((p) => {
+      const val = p.querySelector(".price .val");
+      const ann = p.querySelector(".annual");
+      if (mode === "y"){
+        val.textContent = fmtEur(parseFloat(p.dataset.pm) * 0.8);
+        if (ann) ann.hidden = false;
+      } else {
+        val.textContent = p.dataset.pm;
+        if (ann) ann.hidden = true;
+      }
+    });
+    billBtns.forEach((b) => b.classList.toggle("active", b.dataset.bill === mode));
+  }
+  billBtns.forEach((b) => b.addEventListener("click", () => applyBilling(b.dataset.bill)));
 
   // sticky "how it works": highlight active step near viewport center
   const steps = [...document.querySelectorAll("#howSteps .pstep")];
