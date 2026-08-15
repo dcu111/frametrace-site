@@ -201,7 +201,7 @@
           <option value="czesciowy">Częściowo wykorzystany</option>
           <option value="wyczerpany">Wyczerpany</option>
         </select>
-        <p class="help">Limit to 200 tys. EUR na 3 lata. Sprawdzisz go w systemie SUDOP.</p>
+        <p class="help">Od 1.01.2024 limit wynosi <b>300 tys. EUR</b> w okresie 3 lat liczonych w sposób ciągły. Sprawdzisz go w systemie SUDOP.</p>
       </div>
       <div>
         <label>Czy możecie zapłacić z góry i czekać na zwrot?</label>
@@ -213,13 +213,34 @@
         <p class="help">Dig.IT działa w formule refundacji — najpierw płacisz, potem odzyskujesz.</p>
       </div>
     </div>
+    <div class="row">
+      <div>
+        <label>Roczne przychody netto (średnio z 3 lat)</label>
+        <select id="f-rev">
+          <option value="">Nie wiem / wolę nie podawać</option>
+          <option value="do500">Poniżej 500 tys. zł</option>
+          <option value="do3mln">500 tys. – 3 mln zł</option>
+          <option value="ponad3mln">Powyżej 3 mln zł</option>
+        </select>
+        <p class="help">W Dig.IT grant nie może przekroczyć <b>30% średnich rocznych przychodów</b> z 3 lat — to twardy próg.</p>
+      </div>
+      <div>
+        <label>Czy firma jest rentowna?</label>
+        <select id="f-prof">
+          <option value="">Nie wiem</option>
+          <option value="tak">Tak, mamy zysk</option>
+          <option value="nie">Nie, jesteśmy na minusie</option>
+        </select>
+        <p class="help">Dig.IT bada kondycję finansową: rentowność sprzedaży netto min. 4%, Quick Ratio 0,7–1,8, zadłużenie maks. 68%.</p>
+      </div>
+    </div>
     <label>Zakres planowanego projektu</label>
     <select id="f-scale">
       <option value="">Nie wiem / jeszcze nie zdecydowaliśmy</option>
       <option value="duzy">Szersza cyfryzacja (ERP, automatyzacja, kilka systemów)</option>
       <option value="maly">Wyłącznie paszport produktowy (DPP)</option>
     </select>
-    <p class="help">Dig.IT finansuje projekty od ok. 300 tys. zł — przy mniejszym zakresie lepiej sprawdzają się programy regionalne.</p>
+    <p class="help">Dig.IT finansuje projekty od ok. 300 tys. zł (grant min. 150 tys. przy 50%) — przy mniejszym zakresie lepiej sprawdzają się programy regionalne.</p>
 
     <button type="button" class="btn wide" style="margin-top:22px;" onclick="run()">Pokaż moje dofinansowanie →</button>
   </div>
@@ -258,6 +279,7 @@
       const f = j.fields || {};
       set("f-size", f.size); set("f-industry", f.industry); set("f-voiv", f.voivodeship);
       set("f-years", f.years5); set("f-dm", f.deminimis); set("f-liq", f.liquidity); set("f-scale", f.scale);
+      set("f-rev", f.revenue); set("f-prof", f.profitable);
       const braki = [["f-size","wielkość firmy"],["f-industry","branża"],["f-voiv","województwo"],["f-years","staż firmy"]]
         .filter(([id]) => !g(id)).map(([,n]) => n);
       st.innerHTML = braki.length
@@ -273,8 +295,26 @@
 
   // ---------- REGUŁY (deterministyczne — bez AI) ----------
   const REGION = {
-    "lubelskie": { name: "Cyfryzacja lubelskich MŚP", desc: "Regionalny program na cyfryzację i specjalistyczne oprogramowanie." },
-    "warminsko-mazurskie": { name: "Pożyczka na cyfryzację z umorzeniem", desc: "Preferencyjna pożyczka z możliwością częściowego umorzenia." }
+    "lubelskie": {
+      name: "2.4 Cyfryzacja lubelskich MŚP (FEL 2021–2027)",
+      amt: "do 1 200 000 zł · do 70% kosztów netto",
+      pts: [
+        "Najwyższa intensywność wsparcia spośród sprawdzonych programów — <b>do 70% kosztów netto</b>, w formie pomocy de minimis.",
+        "Ostatni nabór trwał 19.12.2025 – 27.02.2026 (alokacja 42,45 mln zł); rozstrzygnięcie planowane na IV kwartał 2026 — czyli <b>nabór jest obecnie zamknięty</b>.",
+        "Uwaga: licencje i subskrypcje na okres 12 miesięcy lub krótszy są <b>kosztem niekwalifikowanym</b> — finansowane jest wdrożenie, nie abonament."
+      ],
+      next: "Nabór zamknięty — monitorujemy ogłoszenie kolejnej edycji i przygotujemy zakres wdrożenia z wyprzedzeniem."
+    },
+    "warminsko-mazurskie": {
+      name: "Pożyczka na cyfryzację przedsiębiorstw z umorzeniem",
+      amt: "pożyczka 2% w skali roku · umorzenie do 8%",
+      pts: [
+        "⚠️ To <b>pożyczka, nie dotacja</b> — kapitał trzeba zwrócić. Oprocentowanie 2% rocznie, okres spłaty do 7 lat, bez prowizji.",
+        "Umorzeniu podlega <b>do 8% wartości pożyczki</b> po spełnieniu jednego z warunków (m.in. obszary marginalizacji, inteligentne specjalizacje regionalne, wdrożenie innowacyjnych procesów).",
+        "Umowy zawierane są do wyczerpania środków, <b>nie później niż do 31 sierpnia 2026</b> — termin jest bardzo bliski."
+      ],
+      next: "Jeśli ta ścieżka Was interesuje, trzeba działać natychmiast — sprawdzimy dostępność środków w WMARR."
+    }
   };
 
   function assess(f){
@@ -290,14 +330,28 @@
     else if (!prod){ dig.status="no"; dig.amt="Niedostępne"; dig.why.push("Wymagane przetwórstwo przemysłowe lub usługi produkcyjne — sam handel lub usługi nieprodukcyjne nie kwalifikują się."); }
     else if (f.years === "nie"){ dig.status="no"; dig.amt="Niedostępne"; dig.why.push("Wymagane pięć zamkniętych lat obrotowych."); }
     else if (dmDead){ dig.status="no"; dig.amt="Niedostępne"; dig.why.push("Grant jest pomocą de minimis — przy wyczerpanym limicie nie można go otrzymać."); }
+    else if (f.rev === "do500"){
+      dig.status="no"; dig.amt="Niedostępne przy tych przychodach";
+      dig.why.push("Grant nie może przekroczyć <b>30% średnich rocznych przychodów netto z 3 lat</b>. Przy przychodach poniżej 500 tys. zł nie da się osiągnąć minimalnego grantu 150 tys. zł.");
+      dig.why.push("To nie przekreśla dofinansowania — sprawdź programy regionalne, które mają niższe progi.");
+    }
+    else if (f.prof === "nie"){
+      dig.status="no"; dig.amt="Niedostępne przy stracie";
+      dig.why.push("Program bada kondycję finansową: wymagana <b>rentowność sprzedaży netto min. 4%</b> (średnio z 3 lat), Quick Ratio 0,7–1,8 oraz zadłużenie ogólne maks. 68%.");
+      dig.why.push("Przy ujemnym wyniku wniosek nie przejdzie oceny finansowej.");
+    }
     else {
       dig.status = "yes"; dig.amt = "150 000 – 850 000 zł · do 50% kosztów netto";
-      dig.why.push("Profil firmy mieści się w grupie docelowej programu (produkcja, MŚP, wymagany staż).");
-      if (f.liq === "nie"){ dig.status="maybe"; dig.why.push("⚠️ Grant wypłacany jest jako refundacja — najpierw płacisz z własnych środków, zwrot przychodzi po rozliczeniu. Bez zapasu płynności to bariera."); }
-      if (!f.dm){ dig.status = dig.status === "yes" ? "maybe" : dig.status; dig.why.push("Do potwierdzenia: pozostały limit de minimis (200 tys. EUR / 3 lata) — sprawdzisz w systemie SUDOP."); }
+      dig.why.push("Profil firmy mieści się w grupie docelowej programu (MŚP, przetwórstwo przemysłowe lub usługi produkcyjne, wymagany staż).");
+      dig.why.push("Kwalifikowane są zakup i wdrożenie technologii cyfrowych oraz prace programistyczne. Maszyny, materiały i szkolenia — łącznie maks. 40% kosztów.");
+      if (f.liq === "nie"){ dig.status="maybe"; dig.why.push("⚠️ Grant wypłacany jest wyłącznie jako <b>refundacja po zakończeniu projektu</b> — brak zaliczek. Bez zapasu płynności to realna bariera."); }
+      if (!f.prof){ dig.status = dig.status === "yes" ? "maybe" : dig.status; dig.why.push("Do potwierdzenia: wskaźniki finansowe (ROS min. 4%, Quick Ratio 0,7–1,8, zadłużenie maks. 68% — liczone jako średnia z 3 lat)."); }
+      if (!f.rev){ dig.status = dig.status === "yes" ? "maybe" : dig.status; dig.why.push("Do potwierdzenia: wysokość przychodów — grant nie może przekroczyć 30% średnich rocznych przychodów netto z 3 lat."); }
+      if (!f.dm){ dig.status = dig.status === "yes" ? "maybe" : dig.status; dig.why.push("Do potwierdzenia: pozostały limit de minimis (300 tys. EUR w 3 latach kroczących) — sprawdzisz w systemie SUDOP."); }
+      if (f.rev === "do3mln") dig.why.push("Przy przychodach 500 tys. – 3 mln zł realny grant mieści się w dolnej części widełek (limit 30% przychodów).");
       if (f.scale === "maly"){ dig.status = dig.status === "yes" ? "maybe" : dig.status; dig.why.push("Minimalny grant 150 tys. zł oznacza projekt od ok. 300 tys. zł. Samo wdrożenie DPP zwykle tego nie wypełnia — wchodzi się tu jako część większego projektu cyfryzacji."); }
       if (f.scale === "duzy") dig.why.push("Szerszy projekt cyfryzacji (np. z ERP) ułatwia osiągnięcie progu wartości projektu.");
-      dig.next = "Wykonaj bezpłatny <b>Test Dojrzałości Cyfrowej PFR</b> (wymagany załącznik), a my przygotujemy opis zakresu i wycenę wdrożenia jako gotową pozycję do wniosku.";
+      dig.next = "Wykonaj <b>Test Dojrzałości Cyfrowej</b> (wymagany załącznik, dostępny na digit.arp.pl), a my przygotujemy opis zakresu i wycenę wdrożenia jako gotową pozycję do wniosku. <b>Termin naboru 2/2026 nie został jeszcze ogłoszony</b> — monitorujemy go na bieżąco.";
     }
     out.push(dig);
 
@@ -307,11 +361,11 @@
     else if (!sme){ ed.status="no"; ed.amt="Uzupełnij dane"; ed.why.push("Wybierz wielkość firmy."); }
     else if (dmDead){ ed.status="no"; ed.amt="Niedostępne"; ed.why.push("Usługa stanowi pomoc de minimis — przy wyczerpanym limicie nie jest dostępna."); }
     else {
-      ed.status="yes"; ed.amt="0 zł dla firmy · 100% pokrywa hub";
-      ed.why.push("Usługi hubów są nieodpłatne dla MŚP — hub rozlicza się z wykonawcą, firma nie wykłada środków.");
-      ed.why.push("Nabór prowadzony jest w trybie ciągłym, bez czekania na konkurs.");
-      ed.why.push("Zakres ograniczony do krótkich, wystandaryzowanych usług — mieści się tu audyt gotowości danych produktowych, nie pełne wdrożenie.");
-      ed.next = "Dobre wejście na start: <b>audyt gotowości danych produktowych</b> bez kosztu, a dopiero potem wdrożenie finansowane z Dig.IT lub programu regionalnego.";
+      ed.status="yes"; ed.amt="0 zł dla firmy · koszt pokrywa hub";
+      ed.why.push("Usługi hubów są <b>nieodpłatne dla mikro, małych i średnich firm</b> i stanowią pomoc de minimis — hub rozlicza się z wykonawcą, firma nie wykłada środków.");
+      ed.why.push("W Polsce działa <b>osiem partnerstw EDIH</b>, a zgłoszenia przyjmowane są w <b>trybie ciągłym</b> — nie trzeba czekać na konkurs.");
+      ed.why.push("Zakres ograniczony do wystandaryzowanych usług (ocena dojrzałości cyfrowej, plan transformacji, testowanie rozwiązań, szkolenia) — mieści się tu audyt gotowości danych produktowych, nie pełne wieloletnie wdrożenie.");
+      ed.next = "Najlepsze wejście na start: <b>audyt gotowości danych produktowych</b> bez kosztu, a dopiero potem wdrożenie finansowane z Dig.IT lub programu regionalnego. Sprawdzimy dostępność usługi w hubie właściwym dla Waszego regionu.";
     }
     out.push(ed);
 
@@ -321,10 +375,9 @@
     else if (!f.voiv){ rg.status="maybe"; rg.amt="Zależy od województwa"; rg.why.push("Wybierz województwo, żeby sprawdzić dostępne programy."); rg.next="Wskaż region — sprawdzimy aktualne nabory."; }
     else if (REGION[f.voiv]){
       const r = REGION[f.voiv];
-      rg.status="yes"; rg.amt="Program dostępny w Twoim regionie";
-      rg.why.push("<b>" + r.name + "</b> — " + r.desc);
-      rg.why.push("Progi kwotowe są niższe niż w programach krajowych, więc lepiej pasują do samodzielnego wdrożenia DPP.");
-      rg.next = "Sprawdzimy termin najbliższego naboru i przygotujemy zakres wdrożenia pod wniosek.";
+      rg.status = "maybe"; rg.name = r.name; rg.amt = r.amt;
+      r.pts.forEach(p => rg.why.push(p));
+      rg.next = r.next;
     } else {
       rg.status="maybe"; rg.amt="Do sprawdzenia — nabory zmieniają się w czasie";
       rg.why.push("Dotacje na specjalistyczne oprogramowanie udzielane są także regionalnie, a kolejne województwa uruchamiają własne programy.");
@@ -347,7 +400,7 @@
       body = "Dotacje na cyfryzację kierowane są do firm do 249 osób. Przy Waszej skali finansowanie realizuje się zwykle ze środków własnych albo z programów branżowych — chętnie przeanalizujemy dostępne opcje indywidualnie.";
     } else if (f.dm === "wyczerpany"){
       head = "Wyczerpany limit de minimis blokuje ścieżkę dotacyjną.";
-      body = "Programy cyfryzacyjne dla MŚP działają w formule pomocy de minimis (200 tys. EUR na 3 lata). Warto sprawdzić dokładny stan limitu w systemie SUDOP — jeśli część limitu odnowi się w kolejnym roku, wrócimy do tematu.";
+      body = "Programy cyfryzacyjne dla MŚP działają w formule pomocy de minimis — limit to 300 tys. EUR w okresie 3 lat liczonych w sposób ciągły. Warto sprawdzić dokładny stan limitu w systemie SUDOP: ponieważ okres jest kroczący, starsza pomoc stopniowo „wypada” z limitu i część puli może się odnowić.";
     } else if (yes.length){
       const hasEdih = edih && edih.status === "yes";
       const hasDigit = digit && digit.status === "yes";
@@ -368,7 +421,7 @@
   }
 
   function run(){
-    const f = { size:g("f-size"), industry:g("f-industry"), voiv:g("f-voiv"), years:g("f-years"), dm:g("f-dm"), liq:g("f-liq"), scale:g("f-scale") };
+    const f = { size:g("f-size"), industry:g("f-industry"), voiv:g("f-voiv"), years:g("f-years"), dm:g("f-dm"), liq:g("f-liq"), scale:g("f-scale"), rev:g("f-rev"), prof:g("f-prof") };
     if (!f.size || !f.industry){
       const el = document.getElementById(!f.size ? "f-size" : "f-industry");
       el.style.borderColor = "#c0392b"; el.scrollIntoView({ behavior:"smooth", block:"center" }); el.focus();
@@ -399,7 +452,7 @@
           (p.next ? '<div class="nx"><b>Następny krok:</b> ' + p.next + "</div>" : "") +
         "</div>"
       ).join("") +
-      '<div class="note"><b>Ważne:</b> wynik jest orientacyjny i nie stanowi porady dotacyjnej ani gwarancji przyznania środków. Terminy naborów i regulaminy zmieniają się — każdy przypadek potwierdzamy w aktualnej dokumentacji programu przed złożeniem wniosku. Dotacje finansują wdrożenie (koszt jednorazowy), nie abonament za utrzymanie.</div>' +
+      '<div class="note"><b>Ważne:</b> wynik jest orientacyjny i nie stanowi porady dotacyjnej ani gwarancji przyznania środków. Terminy naborów i regulaminy zmieniają się — każdy przypadek potwierdzamy w aktualnej dokumentacji programu przed złożeniem wniosku. Dotacje finansują <b>wdrożenie</b> (koszt jednorazowy), nie abonament za utrzymanie: w części programów licencje i subskrypcje na 12 miesięcy lub krócej są kosztem niekwalifikowanym.<br><br><b>Dane zweryfikowane 15.08.2026</b> w źródłach pierwotnych: <a href="https://uokik.gov.pl/zasady-pomocy-de-minimis" target="_blank" rel="noopener" style="text-decoration:underline">UOKiK</a> (limit de minimis), <a href="https://digit.arp.pl" target="_blank" rel="noopener" style="text-decoration:underline">ARP / digit.arp.pl</a> (Dig.IT), <a href="https://www.parp.gov.pl/component/site/site/edih" target="_blank" rel="noopener" style="text-decoration:underline">PARP</a> (EDIH), <a href="https://www.funduszeeuropejskie.gov.pl/nabory/24-cyfryzacja-lubelskich-msp-1/" target="_blank" rel="noopener" style="text-decoration:underline">Portal Funduszy Europejskich</a> i <a href="https://www.bgk.pl/produkty/pozyczka-na-cyfryzacje-przedsiebiorstw-z-umorzeniem/" target="_blank" rel="noopener" style="text-decoration:underline">BGK</a> (programy regionalne).</div>' +
       leadHTML(v, list, f);
 
     document.getElementById("results").scrollIntoView({ behavior:"smooth", block:"start" });
@@ -408,7 +461,8 @@
   function leadHTML(v, list, f){
     const summary = "WYNIK KWALIFIKACJI\\n" +
       "Wielkość: " + f.size + " | Branża: " + f.industry + " | Woj.: " + (f.voiv||"-") +
-      " | 5 lat: " + (f.years||"-") + " | de minimis: " + (f.dm||"-") + " | płynność: " + (f.liq||"-") + " | zakres: " + (f.scale||"-") + "\\n" +
+      " | 5 lat: " + (f.years||"-") + " | de minimis: " + (f.dm||"-") + " | płynność: " + (f.liq||"-") + " | zakres: " + (f.scale||"-") +
+      " | przychody: " + (f.rev||"-") + " | rentowność: " + (f.prof||"-") + "\\n" +
       list.map(p => "- " + p.name + ": " + p.status.toUpperCase() + " (" + p.amt + ")").join("\\n");
     return '<div class="lead-box" id="leadBox">' +
       "<h3>Chcesz, żebyśmy to poprowadzili?</h3>" +

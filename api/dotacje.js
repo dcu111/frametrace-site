@@ -5,9 +5,10 @@ const SCHEMA = {
   type: "OBJECT",
   properties: {
     size: STR, industry: STR, voivodeship: STR,
-    years5: STR, deminimis: STR, liquidity: STR, scale: STR, note: STR
+    years5: STR, deminimis: STR, liquidity: STR, scale: STR,
+    revenue: STR, profitable: STR, note: STR
   },
-  required: ["size","industry","voivodeship","years5","deminimis","liquidity","scale","note"]
+  required: ["size","industry","voivodeship","years5","deminimis","liquidity","scale","revenue","profitable","note"]
 };
 
 const PROMPT = `Przeanalizuj opis firmy napisany przez przedsiębiorcę i wypełnij pola kwalifikacji dotacyjnej.
@@ -22,6 +23,8 @@ Niczego nie zgaduj i nie domyślaj się na podstawie stereotypów.
 - "deminimis": "pelny" (nie korzystali z dotacji/pomocy de minimis), "czesciowy" (korzystali, ale niedużo), "wyczerpany" (limit wykorzystany), "" jeśli nie wspomniano.
 - "liquidity": "tak" jeśli z opisu wynika, że firma może zapłacić z góry i czekać na refundację; "nie" jeśli wprost pisze o braku środków/płynności; "" jeśli nie wiadomo.
 - "scale": "duzy" jeśli planują szerszy projekt cyfryzacji (ERP, automatyzacja, maszyny, kilka systemów); "maly" jeśli chodzi wyłącznie o sam paszport produktowy; "" jeśli nie wiadomo.
+- "revenue": roczne przychody firmy. "do500" (poniżej 500 tys. zł), "do3mln" (od 500 tys. do 3 mln zł), "ponad3mln" (powyżej 3 mln zł). Jeśli nie podano kwoty przychodów — "".
+- "profitable": "tak" jeśli firma pisze, że jest rentowna / ma zysk; "nie" jeśli pisze o stracie lub braku rentowności; "" jeśli nie wspomniano.
 - "note": jedno krótkie zdanie po polsku streszczające, czym firma się zajmuje (na podstawie opisu).`;
 
 const hits = new Map(); // best-effort limit (serwerless: pamięć bywa resetowana)
