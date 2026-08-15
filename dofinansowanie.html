@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FrameTrace · Sprawdź dofinansowanie na wdrożenie DPP</title>
+<meta name="description" content="Sprawdź w 2 minuty, z jakich dotacji unijnych możesz sfinansować wdrożenie Cyfrowego Paszportu Produktu. Opisz firmę, a my dobierzemy programy." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:#ffffff; --soft:#f6f6f4; --ink:#0a0a0a; --muted:#6b6b68; --faint:#9a9a96;
+    --line:#ececea; --orange:#e2603a; --ok:#2f9e44; --warn:#b8860b; --radius:16px;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Inter",-apple-system,sans-serif; color:var(--ink); background:var(--bg); line-height:1.55; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; }
+  .mono { font-family:"JetBrains Mono",monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); font-weight:500; }
+  header { position:sticky; top:0; z-index:50; background:rgba(255,255,255,.92); backdrop-filter:blur(6px); border-bottom:1px solid var(--line); }
+  .nav { max-width:1000px; margin:0 auto; padding:0 24px; height:64px; display:flex; align-items:center; justify-content:space-between; }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:700; font-size:17px; letter-spacing:-.02em; text-decoration:none; }
+  .brand .mark { width:22px; height:22px; border:1.5px solid var(--ink); border-radius:6px; position:relative; }
+  .brand .mark::after { content:""; position:absolute; inset:4px; border:1.5px solid var(--ink); border-radius:3px; }
+  .badge { font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--orange); border:1px solid #f3cdbf; background:#fdf3ef; border-radius:999px; padding:3px 10px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:44px 24px 90px; }
+  h1 { font-size:clamp(28px,4vw,42px); font-weight:800; letter-spacing:-.03em; line-height:1.08; margin:10px 0 10px; }
+  .sub { color:var(--muted); font-size:17px; max-width:62ch; margin:0 0 34px; }
+
+  label { display:block; font-size:12.5px; font-weight:600; color:var(--ink); margin:14px 0 5px; }
+  input, select, textarea {
+    width:100%; font-family:inherit; font-size:14.5px; color:var(--ink); background:var(--bg);
+    border:1px solid var(--line); border-radius:10px; padding:11px 13px; outline:none;
+  }
+  input:focus, select:focus, textarea:focus { border-color:var(--ink); }
+  textarea { min-height:130px; resize:vertical; line-height:1.6; }
+  .help { font-size:12px; color:var(--faint); margin:4px 0 0; line-height:1.45; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:640px){ .row{ grid-template-columns:1fr; } }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--ink); color:#fff; border:1px solid var(--ink);
+    padding:14px 28px; border-radius:999px; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; transition:opacity .2s, transform .2s; }
+  .btn:hover { opacity:.9; transform:translateY(-1px); }
+  .btn.sec { background:#fff; color:var(--ink); border-color:var(--line); font-size:13.5px; padding:10px 20px; }
+  .btn.sec:hover { border-color:var(--ink); }
+  .btn.wide { width:100%; }
+  .btn[disabled] { opacity:.5; pointer-events:none; }
+
+  /* ---- HERO opisu ---- */
+  .aihero { border:1.5px solid var(--ink); border-radius:20px; padding:28px; background:linear-gradient(180deg,#fbf6f3,#ffffff); }
+  .aihero-badge { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--orange); background:#fdf3ef; border:1px solid #f3cdbf; border-radius:999px; padding:4px 12px; }
+  .aihero h2 { font-size:clamp(19px,2.4vw,24px); font-weight:800; letter-spacing:-.02em; margin:13px 0 6px; line-height:1.2; }
+  .aihero p.lead { color:var(--muted); font-size:14.5px; margin:0 0 16px; max-width:60ch; }
+  .aibtn { background:var(--orange); border-color:var(--orange); margin-top:14px; }
+  .ai-status { font-size:13px; color:var(--muted); margin-top:12px; }
+  .exlink { background:none; border:none; padding:0; font-family:inherit; font-size:12.5px; color:var(--faint); text-decoration:underline; cursor:pointer; margin-top:8px; }
+  .exlink:hover { color:var(--ink); }
+
+  .or { text-align:center; margin:26px 0 6px; color:var(--faint); font-size:13px; font-weight:600; }
+
+  .box { border:1px solid var(--line); border-radius:16px; padding:22px 24px; margin-top:16px; }
+  .box > h3 { font-size:15px; font-weight:700; margin:0 0 4px; }
+  .box > .bh { color:var(--muted); font-size:13px; margin:0 0 6px; }
+
+  /* ---- WYNIKI ---- */
+  #results { margin-top:34px; }
+  .verdict { border-radius:20px; padding:28px; color:#fff; background:#141413; border:1px solid #2a2926; }
+  .verdict .lbl { color:var(--orange); font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
+  .verdict h2 { font-size:clamp(22px,3vw,30px); font-weight:700; letter-spacing:-.025em; line-height:1.15; margin:10px 0 0; }
+  .verdict p { color:#b3b2ad; font-size:14.5px; margin:12px 0 0; max-width:62ch; }
+  .vstat { display:flex; gap:28px; flex-wrap:wrap; margin-top:22px; padding-top:20px; border-top:1px solid #2a2926; }
+  .vstat .s .big { font-size:26px; font-weight:700; letter-spacing:-.02em; }
+  .vstat .s .sl { color:#8f8e89; font-size:12px; margin-top:2px; }
+
+  .prog { border:1px solid var(--line); border-radius:16px; padding:22px 24px; margin-top:14px; }
+  .prog.yes { border-color:#bfe3c8; background:#f7fcf8; }
+  .prog.maybe { border-color:#ecdcb4; background:#fdfaf2; }
+  .prog.no { opacity:.72; }
+  .prog-top { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+  .prog h3 { font-size:16.5px; font-weight:700; letter-spacing:-.01em; margin:0; }
+  .pb { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; border-radius:999px; padding:4px 11px; white-space:nowrap; }
+  .pb.yes { color:#1e7a33; background:#e6f5ea; border:1px solid #bfe3c8; }
+  .pb.maybe { color:#8a6300; background:#fbf2dc; border:1px solid #ecdcb4; }
+  .pb.no { color:var(--faint); background:var(--soft); border:1px solid var(--line); }
+  .prog .amt { font-size:14.5px; font-weight:600; margin-top:8px; }
+  .prog ul { margin:10px 0 0; padding-left:20px; color:var(--muted); font-size:13.5px; }
+  .prog ul li { margin:4px 0; }
+  .prog .nx { margin-top:12px; padding-top:12px; border-top:1px solid var(--line); font-size:13.5px; color:var(--muted); }
+  .prog .nx b { color:var(--ink); }
+
+  .note { border:1px solid var(--line); border-left:3px solid var(--ink); background:var(--soft); border-radius:12px; padding:16px 18px; margin-top:22px; font-size:13px; color:var(--muted); }
+  .note b { color:var(--ink); }
+
+  /* ---- LEAD ---- */
+  .lead-box { border:1.5px solid var(--ink); border-radius:20px; padding:28px; margin-top:26px; background:linear-gradient(180deg,#fbf6f3,#fff); }
+  .lead-box h3 { font-size:20px; font-weight:800; letter-spacing:-.02em; margin:0 0 6px; }
+  .lead-box p { color:var(--muted); font-size:14px; margin:0 0 6px; max-width:58ch; }
+  .ok-msg { color:var(--ok); font-weight:600; font-size:14px; margin-top:12px; }
+  .err-msg { color:#c0392b; font-size:13.5px; margin-top:12px; }
+  .hidden { display:none !important; }
+  footer { border-top:1px solid var(--line); padding:26px 0; color:var(--faint); font-size:13px; }
+  footer .wrap { padding-top:0; padding-bottom:0; }
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <a class="brand" href="/"><span class="mark"></span> FrameTrace</a>
+    <span class="badge">Kwalifikator dotacji</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <p class="mono">Finansowanie wdrożenia</p>
+  <h1>Sprawdź, ile z wdrożenia sfinansuje Unia.</h1>
+  <p class="sub">Opisz swoją firmę własnymi słowami — dobierzemy programy dotacyjne, z których możesz pokryć koszt wdrożenia Cyfrowego Paszportu Produktu. Zajmuje 2 minuty, nic nie kosztuje.</p>
+
+  <!-- ====== OPIS FIRMY ====== -->
+  <section class="aihero">
+    <span class="aihero-badge">✦ Najszybszy sposób</span>
+    <h2>Opisz swoją firmę — resztę wypełnimy za Ciebie.</h2>
+    <p class="lead">Napisz zwyczajnie, kilka zdań: czym się zajmujecie, ile osób zatrudniacie, gdzie macie siedzibę i od kiedy działacie. Nasz system rozpozna dane i dobierze programy.</p>
+    <textarea id="desc" placeholder="np. Produkujemy meble kuchenne na wymiar, zatrudniamy 35 osób, działamy od 2011 roku pod Poznaniem. Nie korzystaliśmy dotąd z dotacji. Planujemy też wdrożyć system ERP."></textarea>
+    <button type="button" class="exlink" onclick="fillExample()">Wstaw przykładowy opis</button>
+    <button type="button" class="btn aibtn wide" id="aiBtn" onclick="analyze()">✨ Sprawdź moje dofinansowanie</button>
+    <div id="ai-status" class="ai-status"></div>
+  </section>
+
+  <p class="or">↓ dane odczytane z opisu — sprawdź i popraw, jeśli trzeba</p>
+
+  <!-- ====== FORMULARZ ====== -->
+  <div class="box">
+    <h3>Dane firmy</h3>
+    <p class="bh">Od tych siedmiu informacji zależy, które programy wchodzą w grę.</p>
+    <div class="row">
+      <div>
+        <label>Wielkość firmy</label>
+        <select id="f-size">
+          <option value="">— wybierz —</option>
+          <option value="mikro">Mikro (do 9 osób)</option>
+          <option value="mala">Mała (10–49 osób)</option>
+          <option value="srednia">Średnia (50–249 osób)</option>
+          <option value="duza">Duża (250+ osób)</option>
+        </select>
+        <p class="help">Programy dla MŚP obejmują firmy do 249 osób.</p>
+      </div>
+      <div>
+        <label>Czym się zajmujecie</label>
+        <select id="f-industry">
+          <option value="">— wybierz —</option>
+          <option value="meble">Produkcja mebli</option>
+          <option value="okna">Produkcja okien / drzwi / stolarki</option>
+          <option value="produkcja">Inna produkcja przemysłowa</option>
+          <option value="uslugi_prod">Usługi produkcyjne (np. obróbka, lakierowanie)</option>
+          <option value="handel">Handel / dystrybucja</option>
+          <option value="inne">Inne usługi</option>
+        </select>
+        <p class="help">Dig.IT wymaga przetwórstwa przemysłowego lub usług produkcyjnych.</p>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Województwo</label>
+        <select id="f-voiv">
+          <option value="">— wybierz —</option>
+          <option value="dolnoslaskie">dolnośląskie</option>
+          <option value="kujawsko-pomorskie">kujawsko-pomorskie</option>
+          <option value="lubelskie">lubelskie</option>
+          <option value="lubuskie">lubuskie</option>
+          <option value="lodzkie">łódzkie</option>
+          <option value="malopolskie">małopolskie</option>
+          <option value="mazowieckie">mazowieckie</option>
+          <option value="opolskie">opolskie</option>
+          <option value="podkarpackie">podkarpackie</option>
+          <option value="podlaskie">podlaskie</option>
+          <option value="pomorskie">pomorskie</option>
+          <option value="slaskie">śląskie</option>
+          <option value="swietokrzyskie">świętokrzyskie</option>
+          <option value="warminsko-mazurskie">warmińsko-mazurskie</option>
+          <option value="wielkopolskie">wielkopolskie</option>
+          <option value="zachodniopomorskie">zachodniopomorskie</option>
+        </select>
+        <p class="help">Decyduje o dostępnych programach regionalnych.</p>
+      </div>
+      <div>
+        <label>Ile lat działa firma</label>
+        <select id="f-years">
+          <option value="">— wybierz —</option>
+          <option value="tak">5 lat lub dłużej</option>
+          <option value="nie">Krócej niż 5 lat</option>
+        </select>
+        <p class="help">Dig.IT wymaga pięciu zamkniętych lat obrotowych.</p>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Limit pomocy de minimis</label>
+        <select id="f-dm">
+          <option value="">Nie wiem</option>
+          <option value="pelny">Nie korzystaliśmy z dotacji</option>
+          <option value="czesciowy">Częściowo wykorzystany</option>
+          <option value="wyczerpany">Wyczerpany</option>
+        </select>
+        <p class="help">Limit to 200 tys. EUR na 3 lata. Sprawdzisz go w systemie SUDOP.</p>
+      </div>
+      <div>
+        <label>Czy możecie zapłacić z góry i czekać na zwrot?</label>
+        <select id="f-liq">
+          <option value="">Nie wiem</option>
+          <option value="tak">Tak, mamy na to środki</option>
+          <option value="nie">Nie, to problem</option>
+        </select>
+        <p class="help">Dig.IT działa w formule refundacji — najpierw płacisz, potem odzyskujesz.</p>
+      </div>
+    </div>
+    <label>Zakres planowanego projektu</label>
+    <select id="f-scale">
+      <option value="">Nie wiem / jeszcze nie zdecydowaliśmy</option>
+      <option value="duzy">Szersza cyfryzacja (ERP, automatyzacja, kilka systemów)</option>
+      <option value="maly">Wyłącznie paszport produktowy (DPP)</option>
+    </select>
+    <p class="help">Dig.IT finansuje projekty od ok. 300 tys. zł — przy mniejszym zakresie lepiej sprawdzają się programy regionalne.</p>
+
+    <button type="button" class="btn wide" style="margin-top:22px;" onclick="run()">Pokaż moje dofinansowanie →</button>
+  </div>
+
+  <!-- ====== WYNIKI ====== -->
+  <div id="results"></div>
+</div>
+
+<footer><div class="wrap"><span id="yr"></span> FrameTrace · Wynik ma charakter orientacyjny i nie stanowi porady dotacyjnej.</div></footer>
+
+<script>
+  document.getElementById("yr").textContent = "© " + new Date().getFullYear();
+  const g = (id) => document.getElementById(id).value;
+  const set = (id, val) => { if (val) { const el = document.getElementById(id); if ([...el.options].some(o => o.value === val)) el.value = val; } };
+
+  function fillExample(){
+    document.getElementById("desc").value =
+      "Produkujemy meble kuchenne na wymiar. Zatrudniamy 35 osób, działamy od 2011 roku, siedziba pod Poznaniem. " +
+      "Nie korzystaliśmy dotąd z żadnych dotacji unijnych. Oprócz paszportów produktowych myślimy o wdrożeniu systemu ERP.";
+  }
+
+  // ---------- AI: opis -> pola ----------
+  async function analyze(){
+    const txt = document.getElementById("desc").value.trim();
+    const st = document.getElementById("ai-status");
+    const btn = document.getElementById("aiBtn");
+    if (txt.length < 15){ st.textContent = "Napisz kilka zdań o firmie (min. 15 znaków)."; return; }
+    btn.disabled = true; st.textContent = "🤖 Analizuję opis…";
+    try {
+      const r = await fetch("/api/dotacje", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: txt })
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || ("HTTP " + r.status));
+      const f = j.fields || {};
+      set("f-size", f.size); set("f-industry", f.industry); set("f-voiv", f.voivodeship);
+      set("f-years", f.years5); set("f-dm", f.deminimis); set("f-liq", f.liquidity); set("f-scale", f.scale);
+      const braki = [["f-size","wielkość firmy"],["f-industry","branża"],["f-voiv","województwo"],["f-years","staż firmy"]]
+        .filter(([id]) => !g(id)).map(([,n]) => n);
+      st.innerHTML = braki.length
+        ? "✅ Odczytano. <b>Uzupełnij jeszcze:</b> " + braki.join(", ") + " — potem kliknij „Pokaż moje dofinansowanie”."
+        : "✅ Odczytano wszystkie dane. Sprawdź je poniżej i kliknij „Pokaż moje dofinansowanie”.";
+      run();
+    } catch (e){
+      st.textContent = "❌ " + e.message + " Wypełnij pola poniżej ręcznie.";
+    }
+    btn.disabled = false;
+  }
+
+  // ---------- REGUŁY (deterministyczne — bez AI) ----------
+  const REGION = {
+    "lubelskie": { name: "Cyfryzacja lubelskich MŚP", desc: "Regionalny program na cyfryzację i specjalistyczne oprogramowanie." },
+    "warminsko-mazurskie": { name: "Pożyczka na cyfryzację z umorzeniem", desc: "Preferencyjna pożyczka z możliwością częściowego umorzenia." }
+  };
+
+  function assess(f){
+    const sme = ["mikro","mala","srednia"].includes(f.size);
+    const prod = ["meble","okna","produkcja","uslugi_prod"].includes(f.industry);
+    const dmDead = f.dm === "wyczerpany";
+    const out = [];
+
+    // --- Dig.IT ---
+    const dig = { key:"digit", name:"Dig.IT — Transformacja Cyfrowa Polskich MŚP", why:[], next:"" };
+    if (f.size === "duza"){ dig.status="no"; dig.amt="Niedostępne"; dig.why.push("Program obejmuje wyłącznie mikro, małe i średnie firmy (do 249 osób)."); }
+    else if (!sme || !f.industry){ dig.status="no"; dig.amt="Uzupełnij dane"; dig.why.push("Wybierz wielkość firmy i branżę, żeby ocenić kwalifikację."); }
+    else if (!prod){ dig.status="no"; dig.amt="Niedostępne"; dig.why.push("Wymagane przetwórstwo przemysłowe lub usługi produkcyjne — sam handel lub usługi nieprodukcyjne nie kwalifikują się."); }
+    else if (f.years === "nie"){ dig.status="no"; dig.amt="Niedostępne"; dig.why.push("Wymagane pięć zamkniętych lat obrotowych."); }
+    else if (dmDead){ dig.status="no"; dig.amt="Niedostępne"; dig.why.push("Grant jest pomocą de minimis — przy wyczerpanym limicie nie można go otrzymać."); }
+    else {
+      dig.status = "yes"; dig.amt = "150 000 – 850 000 zł · do 50% kosztów netto";
+      dig.why.push("Profil firmy mieści się w grupie docelowej programu (produkcja, MŚP, wymagany staż).");
+      if (f.liq === "nie"){ dig.status="maybe"; dig.why.push("⚠️ Grant wypłacany jest jako refundacja — najpierw płacisz z własnych środków, zwrot przychodzi po rozliczeniu. Bez zapasu płynności to bariera."); }
+      if (!f.dm){ dig.status = dig.status === "yes" ? "maybe" : dig.status; dig.why.push("Do potwierdzenia: pozostały limit de minimis (200 tys. EUR / 3 lata) — sprawdzisz w systemie SUDOP."); }
+      if (f.scale === "maly"){ dig.status = dig.status === "yes" ? "maybe" : dig.status; dig.why.push("Minimalny grant 150 tys. zł oznacza projekt od ok. 300 tys. zł. Samo wdrożenie DPP zwykle tego nie wypełnia — wchodzi się tu jako część większego projektu cyfryzacji."); }
+      if (f.scale === "duzy") dig.why.push("Szerszy projekt cyfryzacji (np. z ERP) ułatwia osiągnięcie progu wartości projektu.");
+      dig.next = "Wykonaj bezpłatny <b>Test Dojrzałości Cyfrowej PFR</b> (wymagany załącznik), a my przygotujemy opis zakresu i wycenę wdrożenia jako gotową pozycję do wniosku.";
+    }
+    out.push(dig);
+
+    // --- EDIH ---
+    const ed = { key:"edih", name:"EDIH — Europejskie Huby Innowacji Cyfrowych", why:[], next:"" };
+    if (f.size === "duza"){ ed.status="no"; ed.amt="Niedostępne"; ed.why.push("Usługi hubów są bezpłatne wyłącznie dla MŚP."); }
+    else if (!sme){ ed.status="no"; ed.amt="Uzupełnij dane"; ed.why.push("Wybierz wielkość firmy."); }
+    else if (dmDead){ ed.status="no"; ed.amt="Niedostępne"; ed.why.push("Usługa stanowi pomoc de minimis — przy wyczerpanym limicie nie jest dostępna."); }
+    else {
+      ed.status="yes"; ed.amt="0 zł dla firmy · 100% pokrywa hub";
+      ed.why.push("Usługi hubów są nieodpłatne dla MŚP — hub rozlicza się z wykonawcą, firma nie wykłada środków.");
+      ed.why.push("Nabór prowadzony jest w trybie ciągłym, bez czekania na konkurs.");
+      ed.why.push("Zakres ograniczony do krótkich, wystandaryzowanych usług — mieści się tu audyt gotowości danych produktowych, nie pełne wdrożenie.");
+      ed.next = "Dobre wejście na start: <b>audyt gotowości danych produktowych</b> bez kosztu, a dopiero potem wdrożenie finansowane z Dig.IT lub programu regionalnego.";
+    }
+    out.push(ed);
+
+    // --- Regionalne ---
+    const rg = { key:"region", name:"Programy regionalne (wojewódzkie)", why:[], next:"" };
+    if (f.size === "duza"){ rg.status="no"; rg.amt="Zwykle niedostępne"; rg.why.push("Programy regionalne na cyfryzację kierowane są do MŚP."); }
+    else if (!f.voiv){ rg.status="maybe"; rg.amt="Zależy od województwa"; rg.why.push("Wybierz województwo, żeby sprawdzić dostępne programy."); rg.next="Wskaż region — sprawdzimy aktualne nabory."; }
+    else if (REGION[f.voiv]){
+      const r = REGION[f.voiv];
+      rg.status="yes"; rg.amt="Program dostępny w Twoim regionie";
+      rg.why.push("<b>" + r.name + "</b> — " + r.desc);
+      rg.why.push("Progi kwotowe są niższe niż w programach krajowych, więc lepiej pasują do samodzielnego wdrożenia DPP.");
+      rg.next = "Sprawdzimy termin najbliższego naboru i przygotujemy zakres wdrożenia pod wniosek.";
+    } else {
+      rg.status="maybe"; rg.amt="Do sprawdzenia — nabory zmieniają się w czasie";
+      rg.why.push("Dotacje na specjalistyczne oprogramowanie udzielane są także regionalnie, a kolejne województwa uruchamiają własne programy.");
+      rg.why.push("Progi są niższe i nabory częstsze niż w programach krajowych — to często najlepsza ścieżka dla samego wdrożenia DPP.");
+      rg.next = "Sprawdzimy aktualne nabory w Twoim województwie i odezwiemy się z konkretami.";
+    }
+    out.push(rg);
+    return out;
+  }
+
+  function verdictOf(list, f){
+    const yes = list.filter(p => p.status === "yes");
+    const maybe = list.filter(p => p.status === "maybe");
+    const edih = list.find(p => p.key === "edih");
+    const digit = list.find(p => p.key === "digit");
+    let head, body, cover = "—";
+
+    if (f.size === "duza"){
+      head = "Programy dla MŚP są poza zasięgiem — ale wdrożenie nadal ma sens.";
+      body = "Dotacje na cyfryzację kierowane są do firm do 249 osób. Przy Waszej skali finansowanie realizuje się zwykle ze środków własnych albo z programów branżowych — chętnie przeanalizujemy dostępne opcje indywidualnie.";
+    } else if (f.dm === "wyczerpany"){
+      head = "Wyczerpany limit de minimis blokuje ścieżkę dotacyjną.";
+      body = "Programy cyfryzacyjne dla MŚP działają w formule pomocy de minimis (200 tys. EUR na 3 lata). Warto sprawdzić dokładny stan limitu w systemie SUDOP — jeśli część limitu odnowi się w kolejnym roku, wrócimy do tematu.";
+    } else if (yes.length){
+      const hasEdih = edih && edih.status === "yes";
+      const hasDigit = digit && digit.status === "yes";
+      cover = hasEdih && (hasDigit || list.some(p => p.key==="region" && p.status==="yes")) ? "0–50%" : hasEdih ? "0%" : "do 50%";
+      head = "Dobra wiadomość — kwalifikujesz się do " + yes.length + (yes.length === 1 ? " programu." : " programów.");
+      body = hasEdih
+        ? "Rekomendowana ścieżka: zacznij od bezpłatnego audytu w ramach EDIH (nic nie płacisz), a właściwe wdrożenie sfinansuj z dotacji pokrywającej do połowy kosztów netto."
+        : "Wdrożenie możesz sfinansować z dotacji pokrywającej do połowy kosztów netto. Przygotujemy zakres i wycenę jako gotową pozycję do wniosku.";
+    } else if (maybe.length){
+      cover = "do 50%";
+      head = "Są realne możliwości — wymagają potwierdzenia kilku danych.";
+      body = "Część warunków trzeba sprawdzić (limit de minimis, terminy naborów, zakres projektu). To standardowy etap — przechodzimy przez niego razem z klientem.";
+    } else {
+      head = "Na podstawie podanych danych nie widzimy pasującego programu.";
+      body = "To nie znaczy, że nie ma opcji — nabory i progi zmieniają się kilka razy w roku. Zostaw kontakt, a odezwiemy się, gdy pojawi się program pasujący do Waszego profilu.";
+    }
+    return { head, body, cover, yes: yes.length, maybe: maybe.length };
+  }
+
+  function run(){
+    const f = { size:g("f-size"), industry:g("f-industry"), voiv:g("f-voiv"), years:g("f-years"), dm:g("f-dm"), liq:g("f-liq"), scale:g("f-scale") };
+    if (!f.size || !f.industry){
+      const el = document.getElementById(!f.size ? "f-size" : "f-industry");
+      el.style.borderColor = "#c0392b"; el.scrollIntoView({ behavior:"smooth", block:"center" }); el.focus();
+      return;
+    }
+    document.getElementById("f-size").style.borderColor = "";
+    document.getElementById("f-industry").style.borderColor = "";
+
+    const list = assess(f);
+    const v = verdictOf(list, f);
+    const LBL = { yes:"Kwalifikujesz się", maybe:"Warunkowo", no:"Nie kwalifikuje się" };
+
+    document.getElementById("results").innerHTML =
+      '<div class="verdict">' +
+        '<div class="lbl">Twój wynik</div>' +
+        "<h2>" + v.head + "</h2><p>" + v.body + "</p>" +
+        '<div class="vstat">' +
+          '<div class="s"><div class="big">' + v.cover + '</div><div class="sl">szacowany udział dotacji</div></div>' +
+          '<div class="s"><div class="big">' + v.yes + '</div><div class="sl">programy dostępne</div></div>' +
+          '<div class="s"><div class="big">' + v.maybe + '</div><div class="sl">do potwierdzenia</div></div>' +
+        "</div>" +
+      "</div>" +
+      list.map(p =>
+        '<div class="prog ' + p.status + '">' +
+          '<div class="prog-top"><h3>' + p.name + '</h3><span class="pb ' + p.status + '">' + LBL[p.status] + "</span></div>" +
+          '<div class="amt">' + p.amt + "</div>" +
+          "<ul>" + p.why.map(w => "<li>" + w + "</li>").join("") + "</ul>" +
+          (p.next ? '<div class="nx"><b>Następny krok:</b> ' + p.next + "</div>" : "") +
+        "</div>"
+      ).join("") +
+      '<div class="note"><b>Ważne:</b> wynik jest orientacyjny i nie stanowi porady dotacyjnej ani gwarancji przyznania środków. Terminy naborów i regulaminy zmieniają się — każdy przypadek potwierdzamy w aktualnej dokumentacji programu przed złożeniem wniosku. Dotacje finansują wdrożenie (koszt jednorazowy), nie abonament za utrzymanie.</div>' +
+      leadHTML(v, list, f);
+
+    document.getElementById("results").scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+
+  function leadHTML(v, list, f){
+    const summary = "WYNIK KWALIFIKACJI\\n" +
+      "Wielkość: " + f.size + " | Branża: " + f.industry + " | Woj.: " + (f.voiv||"-") +
+      " | 5 lat: " + (f.years||"-") + " | de minimis: " + (f.dm||"-") + " | płynność: " + (f.liq||"-") + " | zakres: " + (f.scale||"-") + "\\n" +
+      list.map(p => "- " + p.name + ": " + p.status.toUpperCase() + " (" + p.amt + ")").join("\\n");
+    return '<div class="lead-box" id="leadBox">' +
+      "<h3>Chcesz, żebyśmy to poprowadzili?</h3>" +
+      "<p>Przygotujemy opis zakresu i wycenę wdrożenia jako gotową pozycję do wniosku, sprawdzimy terminy najbliższych naborów i skontaktujemy Cię ze sprawdzonym doradcą dotacyjnym.</p>" +
+      '<form id="leadForm" onsubmit="return sendLead(event)">' +
+        '<input type="hidden" id="l-sum" value="' + summary.replace(/"/g,"&quot;") + '" />' +
+        '<div class="row"><div><label>Imię i nazwisko</label><input id="l-name" required /></div>' +
+        '<div><label>Firma</label><input id="l-firm" /></div></div>' +
+        '<div class="row"><div><label>E-mail</label><input id="l-mail" type="email" required /></div>' +
+        '<div><label>Telefon <span style="color:var(--faint);font-weight:500">(opcjonalnie)</span></label><input id="l-tel" /></div></div>' +
+        '<button class="btn wide" type="submit" id="l-btn" style="margin-top:20px;">Wyślij i porozmawiajmy →</button>' +
+        '<div id="l-msg"></div>' +
+      "</form></div>";
+  }
+
+  async function sendLead(ev){
+    ev.preventDefault();
+    const btn = document.getElementById("l-btn"), msg = document.getElementById("l-msg");
+    btn.disabled = true; btn.textContent = "Wysyłam…";
+    try {
+      const body = new URLSearchParams({
+        name: document.getElementById("l-name").value,
+        firma: document.getElementById("l-firm").value,
+        email: document.getElementById("l-mail").value,
+        telefon: document.getElementById("l-tel").value,
+        opis: document.getElementById("desc").value,
+        kwalifikacja: document.getElementById("l-sum").value,
+        _subject: "Kwalifikator dotacji — nowe zgłoszenie",
+        _template: "table", _captcha: "false"
+      });
+      const r = await fetch("https://formsubmit.co/ajax/frametraceai@gmail.com", {
+        method: "POST", headers: { Accept: "application/json" }, body
+      });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      document.getElementById("leadForm").innerHTML =
+        '<div class="ok-msg">✅ Wysłane. Odezwiemy się w ciągu jednego dnia roboczego.</div>';
+    } catch (e){
+      msg.innerHTML = '<div class="err-msg">Nie udało się wysłać — napisz bezpośrednio na <b>frametraceai@gmail.com</b></div>';
+      btn.disabled = false; btn.textContent = "Wyślij i porozmawiajmy →";
+    }
+    return false;
+  }
+</script>
+</body>
+</html>

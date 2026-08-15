@@ -132,6 +132,22 @@
   .gencta-note { font-size: 13.5px; color: var(--faint); }
   @media (max-width: 640px){ .gencta { padding: 44px 24px; } .gencta-cta .btn { width: 100%; } }
 
+  /* ---------- Dotacje ---------- */
+  .dot-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: center; }
+  @media (max-width: 900px){ .dot-grid { grid-template-columns: 1fr; gap: 34px; } }
+  .dot-copy h2 { font-size: clamp(28px,3.6vw,44px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin: 16px 0 0; }
+  .dot-copy p { color: var(--muted); font-size: 18px; margin: 18px 0 0; max-width: 52ch; }
+  .dot-cta { margin-top: 32px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .dot-note { font-size: 13.5px; color: var(--faint); }
+  .dot-panel { border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(180deg,#faf7f4,#fff); padding: 28px; }
+  .dot-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 15px 0; border-bottom: 1px solid var(--line); }
+  .dot-row:last-child { border-bottom: none; }
+  .dot-row .nm { font-size: 14.5px; font-weight: 600; }
+  .dot-row .ds { font-size: 12.5px; color: var(--faint); margin-top: 2px; }
+  .dot-row .vl { font-size: 14px; font-weight: 700; white-space: nowrap; }
+  .dot-panel .foot { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--line); font-size: 12.5px; color: var(--faint); }
+  @media (max-width: 640px){ .dot-cta .btn { width: 100%; justify-content: center; } }
+
   /* ---------- Problem ---------- */
   .cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
   @media (max-width: 860px){ .cards{ grid-template-columns:1fr; } }
@@ -467,6 +483,7 @@
       <a href="#teraz">Dlaczego teraz</a>
       <a href="#cennik">Cennik</a>
       <a href="/generator.html">Paszport</a>
+      <a href="/dofinansowanie">Dofinansowanie</a>
       <a class="btn" href="#kontakt">Skontaktuj się <span class="arw">→</span></a>
     </nav>
   </div>
@@ -716,6 +733,36 @@
           <a class="btn" href="/generator.html">Wygeneruj paszport za darmo <span class="arw">→</span></a>
           <span class="gencta-note">✨ Z AI-Parserem — odczyta dane wprost z Twojego dokumentu.</span>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOFINANSOWANIE -->
+  <section id="dotacje" class="divider">
+    <div class="wrap dot-grid">
+      <div class="dot-copy reveal">
+        <p class="mono">Finansowanie</p>
+        <h2>Nie musisz płacić za wdrożenie z własnej kieszeni.</h2>
+        <p>Wdrożenie Cyfrowego Paszportu Produktu to wydatek, który programy unijne finansują wprost — jako zakup oprogramowania, wdrożenie i szkolenia. Opisz swoją firmę, a sprawdzimy, z których programów możesz skorzystać.</p>
+        <div class="dot-cta">
+          <a class="btn" href="/dofinansowanie">Sprawdź swoje dofinansowanie <span class="arw">→</span></a>
+          <span class="dot-note">2 minuty · bez rejestracji · wynik od razu na ekranie</span>
+        </div>
+      </div>
+      <div class="dot-panel reveal" data-d="1">
+        <div class="dot-row">
+          <div><div class="nm">Dig.IT</div><div class="ds">Cyfryzacja produkcyjnych MŚP</div></div>
+          <div class="vl">do 50%</div>
+        </div>
+        <div class="dot-row">
+          <div><div class="nm">EDIH</div><div class="ds">Audyt gotowości danych</div></div>
+          <div class="vl">0 zł</div>
+        </div>
+        <div class="dot-row">
+          <div><div class="nm">Programy regionalne</div><div class="ds">Nabory wojewódzkie</div></div>
+          <div class="vl">niższe progi</div>
+        </div>
+        <div class="foot">Wynik orientacyjny — każdy przypadek potwierdzamy w aktualnym regulaminie naboru.</div>
       </div>
     </div>
   </section>
