@@ -27,7 +27,8 @@
   .topnav { display:flex; align-items:center; gap:20px; }
   .topnav a { font-size:14px; color:var(--muted); text-decoration:none; }
   .topnav a:hover { color:var(--ink); }
-  .topnav a.hl { font-weight:600; color:var(--orange); }
+  .topnav a.hl { font-weight:600; color:var(--orange); background:#fdf3ef; border:1px solid #f3cdbf; border-radius:999px; padding:7px 15px; transition:background .2s, border-color .2s; }
+  .topnav a.hl:hover { color:var(--orange); background:#fbe8e0; border-color:#e8b9a6; }
   @media (max-width:720px){ .topnav a:not(.hl){ display:none; } .topnav .badge{ display:none; } .topnav{ gap:12px; } .topnav a.hl{ font-size:13px; } }
   .wrap { max-width:1200px; margin:0 auto; padding:40px 24px 90px; }
   h1 { font-size:clamp(26px,3.6vw,38px); font-weight:800; letter-spacing:-.03em; line-height:1.08; margin:10px 0 8px; }

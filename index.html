@@ -70,6 +70,14 @@
   .nav-links { display: flex; align-items: center; gap: 32px; }
   .nav-links a { font-size: 14.5px; color: var(--muted); transition: color .15s ease; }
   .nav-links a:hover { color: var(--ink); }
+  /* wyrozniona zakladka — kanal dotacyjny */
+  .nav-links a.hl {
+    color: #e2603a; font-weight: 600; background: #fdf3ef; border: 1px solid #f3cdbf;
+    border-radius: 999px; padding: 7px 15px; display: inline-flex; align-items: center; gap: 7px;
+    transition: background .2s ease, border-color .2s ease, transform .2s var(--ease);
+  }
+  .nav-links a.hl:hover { color: #e2603a; background: #fbe8e0; border-color: #e8b9a6; transform: translateY(-1px); }
+  .nav-links a.hl .spark { font-size: 12px; line-height: 1; }
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 9px;
     background: var(--ink); color: #fff; padding: 12px 22px; border-radius: 999px;
@@ -96,10 +104,12 @@
     .nav-links a:not(.btn) { font-size: 13.5px; }
     .btn { padding: 10px 16px; font-size: 13.5px; }
   }
+  @media (max-width: 780px) { .nav-links a.hl { padding: 6px 12px; font-size: 13px; } }
   @media (max-width: 560px) {
-    .nav-links { gap: 11px; }
+    .nav-links { gap: 9px; }
     .nav-links a[href="/generator.html"] { display: none; }
     .btn .arw { display: none; }
+    .nav-links a.hl { padding: 6px 11px; font-size: 12.5px; }
   }
 
   /* ---------- Hero ---------- */
@@ -494,7 +504,7 @@
       <a href="#teraz">Dlaczego teraz</a>
       <a href="#cennik">Cennik</a>
       <a href="/generator.html">Paszport</a>
-      <a href="/dofinansowanie">Dofinansowanie</a>
+      <a href="/dofinansowanie" class="hl"><span class="spark">✦</span> Dofinansowanie</a>
       <a class="btn" href="#kontakt">Skontaktuj się <span class="arw">→</span></a>
     </nav>
   </div>
