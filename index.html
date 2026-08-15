@@ -89,7 +89,18 @@
   }
   .seg-btn:hover { color: var(--ink); }
   .seg-btn.active { background: var(--ink); color: #fff; }
-  @media (max-width: 780px) { .nav-links a:not(.btn) { display: none; } }
+  /* na telefonie chowamy kotwice do sekcji, ale linki do narzedzi zostaja widoczne */
+  @media (max-width: 780px) {
+    .nav-links { gap: 14px; }
+    .nav-links a[href^="#"]:not(.btn) { display: none; }
+    .nav-links a:not(.btn) { font-size: 13.5px; }
+    .btn { padding: 10px 16px; font-size: 13.5px; }
+  }
+  @media (max-width: 560px) {
+    .nav-links { gap: 11px; }
+    .nav-links a[href="/generator.html"] { display: none; }
+    .btn .arw { display: none; }
+  }
 
   /* ---------- Hero ---------- */
   .hero { position: relative; padding: 150px 0 120px; overflow: hidden; }

@@ -23,6 +23,11 @@
   .brand .mark { width:22px; height:22px; border:1.5px solid var(--ink); border-radius:6px; position:relative; }
   .brand .mark::after { content:""; position:absolute; inset:4px; border:1.5px solid var(--ink); border-radius:3px; }
   .badge { font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--orange); border:1px solid #f3cdbf; background:#fdf3ef; border-radius:999px; padding:3px 10px; }
+  .topnav { display:flex; align-items:center; gap:20px; }
+  .topnav a { font-size:14px; color:var(--muted); text-decoration:none; }
+  .topnav a:hover { color:var(--ink); }
+  .topnav a.hl { font-weight:600; color:var(--orange); }
+  @media (max-width:720px){ .topnav a:not(.hl){ display:none; } .topnav .badge{ display:none; } .topnav{ gap:12px; } .topnav a.hl{ font-size:13px; } }
   .wrap { max-width:1000px; margin:0 auto; padding:44px 24px 90px; }
   h1 { font-size:clamp(28px,4vw,42px); font-weight:800; letter-spacing:-.03em; line-height:1.08; margin:10px 0 10px; }
   .sub { color:var(--muted); font-size:17px; max-width:62ch; margin:0 0 34px; }
@@ -106,7 +111,11 @@
 <header>
   <div class="nav">
     <a class="brand" href="/"><span class="mark"></span> FrameTrace</a>
-    <span class="badge">Kwalifikator dotacji</span>
+    <nav class="topnav">
+      <a href="/">Strona główna</a>
+      <a href="/generator" class="hl">Wygeneruj paszport →</a>
+      <span class="badge">Kwalifikator dotacji</span>
+    </nav>
   </div>
 </header>
 
