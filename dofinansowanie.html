@@ -373,6 +373,12 @@
     const rg = { key:"region", name:"Programy regionalne (wojewódzkie)", why:[], next:"" };
     if (f.size === "duza"){ rg.status="no"; rg.amt="Zwykle niedostępne"; rg.why.push("Programy regionalne na cyfryzację kierowane są do MŚP."); }
     else if (!f.voiv){ rg.status="maybe"; rg.amt="Zależy od województwa"; rg.why.push("Wybierz województwo, żeby sprawdzić dostępne programy."); rg.next="Wskaż region — sprawdzimy aktualne nabory."; }
+    else if (dmDead){
+      rg.status="no"; rg.amt="Dotacje regionalne niedostępne";
+      rg.why.push("Regionalne dotacje na cyfryzację również udzielane są jako <b>pomoc de minimis</b> — przy wyczerpanym limicie nie można ich otrzymać.");
+      rg.why.push("Alternatywą pozostają instrumenty zwrotne (pożyczki preferencyjne), które nie zawsze obciążają limit de minimis w tej samej skali.");
+      rg.next = "Sprawdzimy dokładny stan limitu w SUDOP — okres 3 lat jest kroczący, więc część puli może się wkrótce odnowić.";
+    }
     else if (REGION[f.voiv]){
       const r = REGION[f.voiv];
       rg.status = "maybe"; rg.name = r.name; rg.amt = r.amt;
