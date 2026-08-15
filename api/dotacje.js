@@ -48,23 +48,36 @@ module.exports = async (req, res) => {
   rec.n++; hits.set(ip, rec);
   if (rec.n > 8) return res.status(429).json({ error: "Zbyt wiele zapytań — spróbuj za chwilę." });
 
+  const call = () => fetch(
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent",
+    {
+      method: "POST",
+      headers: { "content-type": "application/json", "X-goog-api-key": KEY },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: PROMPT + "\n\nOPIS FIRMY:\n" + text }] }],
+        generationConfig: { responseMimeType: "application/json", responseSchema: SCHEMA }
+      })
+    }
+  );
+
   try {
-    const r = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent",
-      {
-        method: "POST",
-        headers: { "content-type": "application/json", "X-goog-api-key": KEY },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: PROMPT + "\n\nOPIS FIRMY:\n" + text }] }],
-          generationConfig: { responseMimeType: "application/json", responseSchema: SCHEMA }
-        })
-      }
-    );
-    const j = await r.json();
-    if (!r.ok) return res.status(502).json({ error: (j.error && j.error.message) || ("Gemini: HTTP " + r.status) });
+    let r = await call(), j = await r.json();
+    // model bywa chwilowo przeciążony — jedna cicha ponowna próba
+    if (!r.ok && (r.status === 429 || r.status === 503)) {
+      await new Promise(s => setTimeout(s, 1800));
+      r = await call(); j = await r.json();
+    }
+    if (!r.ok) {
+      const busy = r.status === 429 || r.status === 503;
+      return res.status(busy ? 503 : 502).json({
+        error: busy
+          ? "Analiza AI jest chwilowo obciążona. Wypełnij proszę pola poniżej ręcznie — zajmie to chwilę i wynik będzie identyczny."
+          : ((j.error && j.error.message) || ("Błąd analizy: HTTP " + r.status))
+      });
+    }
     const cand = (j.candidates || [])[0];
     const out = cand && cand.content && (cand.content.parts || []).map(p => p.text || "").join("");
-    if (!out) return res.status(502).json({ error: "Nie udało się odczytać opisu — wypełnij pola ręcznie." });
+    if (!out) return res.status(502).json({ error: "Nie udało się odczytać opisu — wypełnij pola poniżej ręcznie." });
     return res.status(200).json({ ok: true, fields: JSON.parse(out) });
   } catch (e) {
     return res.status(500).json({ error: String(e.message || e) });

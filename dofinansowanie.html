@@ -265,7 +265,8 @@
         : "✅ Odczytano wszystkie dane. Sprawdź je poniżej i kliknij „Pokaż moje dofinansowanie”.";
       run();
     } catch (e){
-      st.textContent = "❌ " + e.message + " Wypełnij pola poniżej ręcznie.";
+      st.innerHTML = "⚠️ " + e.message;
+      document.getElementById("f-size").scrollIntoView({ behavior:"smooth", block:"center" });
     }
     btn.disabled = false;
   }
